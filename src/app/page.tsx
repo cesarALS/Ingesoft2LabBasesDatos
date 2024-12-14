@@ -10,8 +10,9 @@ export default function Main() {
     <div className="m-gray-500 mx-14 my-10 bg-gray-100">
       <Header />
 
-      {/* Este sería el viewport */}
+      {/* Este sería el viewport, la idea es cambiar esta SearchView por la UpdateView según sea necesario (next tiene cosas para esto, hay varias maneras de hacerlo), luego después de haber hecho cambios en la entrada respectiva en la UpdateView, guardar y poder volver a la SearchView */}
       <div>
+        {/* Wenas, soy el viewport */}
         <SearchView />
       </div>
 

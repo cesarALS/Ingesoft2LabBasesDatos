@@ -1,15 +1,35 @@
 import React from "react";
 import { MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/24/solid";
 
-export default function SearchBar() {
+interface SearchBarProps {
+  headers: string[];
+}
+
+// Aquí hay que pasar los campos de la pestaña elegida para que sirvan como opciones, falta también hacer funcionar el botón de busqueda y el de agregar entrada para que muestre la CreateView respectiva, que debería funcionar majo menos igual que la UpdateView, pero con los campos vacíos
+
+// Falta también programar la busqueda, que no es sino actualizar componentes después de haber hecho el query a la base de datos
+
+export default function SearchBar({ headers }: SearchBarProps) {
   return (
     <div className="m-2 flex items-center rounded-lg bg-gray-200">
       {/* Search Input */}
       <input
         type="text"
-        placeholder="Search..."
+        placeholder="buscar..."
         className="flex-grow bg-transparent px-2 text-gray-700 outline-none"
       />
+
+      {/* "por" Text */}
+      <span className="mx-2 text-gray-700">por</span>
+
+      {/* Dropdown List */}
+      <select className="mx-2 rounded-lg bg-white px-2 py-1 text-gray-700 outline-none">
+        {headers.map((entry) => (
+          <option key={entry} value={entry}>
+            {entry}
+          </option>
+        ))}
+      </select>
 
       {/* Search Button */}
       <button
