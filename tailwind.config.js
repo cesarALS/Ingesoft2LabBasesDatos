@@ -2,8 +2,8 @@
 // tailwind.config.js
 module.exports = {
   content: [
-    "./pages/**/*.{js,ts,jsx,tsx}", // Scan files in the 'pages' directory
-    "./components/**/*.{js,ts,jsx,tsx}", // Scan files in the 'components' directory
+    "./src/app/**/*.{js,ts,jsx,tsx}", // Scan files in the 'app' directory
+    "./src/components/**/*.{js,ts,jsx,tsx}", // Scan files in the 'components' directory
   ],
   theme: {
     extend: {},
