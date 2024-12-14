@@ -25,20 +25,20 @@ export default function ResultsTable({ headers, results }: TableProps) {
         <thead>
           <tr>
             {headers.map((entry) => (
-              <th key={entry} className="border-b px-4 py-2">
+              <th key={entry} className="border-b px-4 py-2 bg-gray-300">
                 {entry}
               </th>
             ))}
-            <th className="border-b px-4 py-2">Editar</th>
+            <th className="border-b px-4 py-2 bg-gray-300">Editar</th>
           </tr>
         </thead>
         <tbody>
           {results.map((entry) => (
             <tr key={entry.id} className="border-b">
-              <td className="flex justify-center px-4 py-2">{entry.id}</td>
-              <td className="px-4 py-2">{entry.name}</td>
-              <td className="px-4 py-2">{entry.email}</td>
-              <td className="px-4 py-2">{entry.date}</td>
+              <td className="flex justify-center font-bold px-4 py-2">{entry.id}</td>
+              <td className="text-center px-4 py-2">{entry.name}</td>
+              <td className="text-center px-4 py-2">{entry.email}</td>
+              <td className="text-center px-4 py-2">{entry.date}</td>
               <td className="flex justify-center px-4 py-2">
                 <button className="flex items-center justify-center rounded-l bg-blue-500 px-2 py-2 text-white hover:bg-blue-600">
                   {/* Edit button */}

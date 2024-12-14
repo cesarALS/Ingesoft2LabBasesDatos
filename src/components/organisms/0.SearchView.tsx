@@ -16,10 +16,10 @@ export default function SearchView() {
   ];
 
   const headers = ["id", "name", "email", "date"];
-  const secciones = ["municipios", "viviendas", "personas", "departamentos"];
+  const secciones = ["Municipios", "Viviendas", "Personas", "Departamentos"];
 
   return (
-    <div>
+    <div className="h-[60vh]">
       <SelectorBar botones={secciones} />
       <div className="max-w relative z-30 w-full bg-white shadow-lg">
         <div className="px-4 pt-4">

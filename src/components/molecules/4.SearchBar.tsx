@@ -15,7 +15,7 @@ export default function SearchBar({ headers }: SearchBarProps) {
       {/* Search Input */}
       <input
         type="text"
-        placeholder="buscar..."
+        placeholder="Buscar..."
         className="flex-grow bg-transparent px-2 text-gray-700 outline-none"
       />
 
