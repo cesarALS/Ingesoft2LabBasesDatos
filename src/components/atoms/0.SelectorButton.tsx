@@ -17,6 +17,7 @@ export default function SelectorButton({ buttonText, onClick, activeTable }: Sel
     <button 
       className={`z-10 mx-1 rounded-t ${col} px-4 py-2 font-bold text-white shadow-lg hover:bg-blue-700`}
       onClick={onClick}
+      title={`Ver vista de ${buttonText}`}
     >
       {buttonText}
     </button>

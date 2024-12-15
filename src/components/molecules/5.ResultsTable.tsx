@@ -35,11 +35,18 @@ export default function ResultsTable({ headers, results }: TableProps) {
               </td>
             ))}
             <td className="flex justify-center px-4 py-2">
-              <button className="flex items-center justify-center rounded-l bg-blue-500 px-2 py-2 text-white hover:bg-blue-600">
+              <button 
+              className="flex items-center justify-center rounded-l bg-blue-500 px-2 py-2 text-white hover:bg-blue-600"
+              title = "Editar este registro"
+              >
                 {/* Botón Editar */}
                 <PencilIcon className="h-5 w-5" />
               </button>
-              <button className="flex items-center justify-center rounded-r bg-red-500 px-2 py-2 text-white hover:bg-red-600">
+              <button 
+              className="flex items-center justify-center rounded-r bg-red-500 px-2 py-2 text-white hover:bg-red-600"
+              title = "Borrar este registro"
+              onClick ={()=>{}}
+              >
                 {/* Botón Eliminar */}
                 <FaTrash className="h-5 w-5" />
               </button>
