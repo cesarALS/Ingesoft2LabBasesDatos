@@ -43,6 +43,7 @@ export default function SearchView() {
   const [data, setData] = useState<{}>([]);
   const [headers, setHeaders] = useState<string[]>([])
 
+  // Hacer la búsqueda a la BD ahora que se cambió de pestaña
   useEffect(() => {
     const { headers, data } = getTable(table);
     setData(data);
@@ -51,7 +52,7 @@ export default function SearchView() {
 
   return (
     <div className="h-[63vh]">
-      <SelectorBar botones={sections} clickFunction={setTable} />
+      <SelectorBar botones={sections} clickFunction={setTable} activeTable={table}/>
       <div className="max-w relative z-30 w-full bg-white shadow-lg">
         <div className="px-4 pt-4">
           <SearchBar headers={headers} />
