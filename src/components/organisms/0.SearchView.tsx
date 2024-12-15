@@ -53,7 +53,7 @@ export default function SearchView() {
       setData(data);
       setHeaders(headers);
       setLoading(false);
-    }, 2000);
+    }, 500);
 
     // Cleanup timeout when the component unmounts or updates
     return () => clearTimeout(timeoutId);
