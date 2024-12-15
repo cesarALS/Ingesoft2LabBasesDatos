@@ -1,6 +1,6 @@
-"use-client"
+"use client"
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import SelectorBar from "../molecules/3.SelectorBar";
 import SearchBar from "../molecules/4.SearchBar";
 import ResultsTable from "../molecules/5.ResultsTable";
@@ -8,12 +8,14 @@ import ResultsTable from "../molecules/5.ResultsTable";
 const sections = ["Municipios", "Viviendas", "Personas", "Departamentos"];
 
 function getTable(table: string){
-  //Esta función debe hacer la consulta al endpoint, y devuelve un arreglo, donde cada 
   
+  //Esta función recoge la tabla de la BD a partir de su nombre,
+  //y la recibe como un objeto json, para mostrarla
+
   if (table == sections[0]){
     return {
       headers:["id", "name", "email", "date"],
-      data:     [
+      data: [
         { id: 1, name: "John Doe", email: "john@example.com", date: "2024-12-14" },
         { id: 2, name: "Jane Smith", email: "jane@example.com", date: "2024-12-15"},
         {id: 3, name: "Jane Smith",email: "jane@example.com",date: "2024-12-15"},
@@ -25,25 +27,31 @@ function getTable(table: string){
     };
   }else{
     return {
-      headers:["id", "name", "email", "date"],
+      headers:["id", "name", "email"],
       data:[
-        { id: 1, name: "John Doe", email: "john@example.com", date: "2024-12-14" },
-        { id: 2, name: "Jane Smith", email: "jane@example.com", date: "2024-12-15"},
-        {id: 3, name: "Jane Smith",email: "jane@example.com",date: "2024-12-15"},
-        {id: 4,name: "Jane Smith",email: "jane@example.com",date: "2024-12-15"},
+        { id: 1, name: "John Doe", email: "john@example.com"},
+        { id: 2, name: "Jane Smith", email: "jane@example.com"},
+        {id: 3, name: "Jane Smith",email: "jane@example.com"},
+        {id: 4,name: "Jane Smith",email: "jane@example.com"},
       ]
     }
   }
-  //Esta función recoge la tabla de la BD a partir de su nombre,
-  //y la recibe como un objeto json, para mostrarla
 };
 
 export default function SearchView() {
-  const { headers, data } = getTable(sections[0]);
+  const [table, setTable] = useState<string>(sections[1]);
+  const [data, setData] = useState<{}>([]);
+  const [headers, setHeaders] = useState<string[]>([])
+
+  useEffect(() => {
+    const { headers, data } = getTable(table);
+    setData(data);
+    setHeaders(headers);
+  }, [table])
 
   return (
     <div className="h-[63vh]">
-      <SelectorBar botones={sections} />
+      <SelectorBar botones={sections} clickFunction={setTable} />
       <div className="max-w relative z-30 w-full bg-white shadow-lg">
         <div className="px-4 pt-4">
           <SearchBar headers={headers} />
