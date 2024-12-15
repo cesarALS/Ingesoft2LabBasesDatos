@@ -12,3 +12,64 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Vivienda {
+  id        Int       @id @default(autoincrement())
+  direccion String    @map("Dirección")
+  tamano    Int       @map("Tamaño")
+  pisos     Int
+  personas  Persona[] @relation("PersonaVivienda")
+  viviendas Persona_has_Vivienda[]
+}
+
+model Departamento {
+  nombre      String     @id
+  area        Float      @map("Área")
+  poblacion   Int        @map("Población")
+  gobernador  String
+  municipios  Municipio[]
+}
+
+model Municipio {
+  id                 Int        @id @default(autoincrement())
+  nombre             String
+  area               Float      @map("Área")
+  poblacion          Int        @map("Población")
+  alcalde            String
+  departamentoNombre String
+  departamento       Departamento @relation(fields: [departamentoNombre], references: [nombre])
+  personas           Persona[]
+}
+
+model Persona {
+  id          Int       @id
+  nombre      String    @map("Nombre_completo")
+  telefono    String    @map("Teléfono")
+  fechaNacimiento DateTime  @map("Fecha_nacimiento")
+  genero      Int?
+  viviendaId  Int
+  municipioId Int
+  vivienda    Vivienda  @relation("PersonaVivienda", fields: [viviendaId], references: [id])
+  municipio   Municipio @relation(fields: [municipioId], references: [id])
+  dependientes Dependientes[] @relation("Responsables")
+  responsables Dependientes[] @relation("Dependientes")
+  viviendas    Persona_has_Vivienda[]
+}
+
+model Dependientes {
+  responsableId Int
+  dependienteId Int
+  responsable   Persona @relation("Responsables", fields: [responsableId], references: [id])
+  dependiente   Persona @relation("Dependientes", fields: [dependienteId], references: [id])
+
+  @@id([dependienteId, responsableId])
+}
+
+model Persona_has_Vivienda {
+  personaId  Int
+  viviendaId Int
+  persona    Persona  @relation(fields: [personaId], references: [id])
+  vivienda   Vivienda @relation(fields: [viviendaId], references: [id])
+
+  @@id([personaId, viviendaId])
+}
