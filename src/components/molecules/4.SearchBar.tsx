@@ -12,19 +12,19 @@ interface SearchBarProps {
 export default function SearchBar({ headers }: SearchBarProps) {
   
   return (
-    <div className="m-2 flex items-center rounded-lg bg-gray-200 hover:bg-gray-300">
+    <div className="m-2 flex items-center rounded-lg bg-gray-200 hover:bg-gray-300 w-[75%]">
       {/* Search Input */}
       <input
         type="text"
         placeholder="Buscar..."
-        className="flex-grow bg-transparent px-2 pl-6 text-gray-700 outline-none"
+        className="flex-grow bg-transparent px-2 pl-6 text-gray-700 outline-none "
       />
 
       {/* "por" Text */}
-      <span className="mx-2 text-gray-700">Por</span>
+      <span className="mx-2 text-gray-700 ">Por</span>
 
       {/* Dropdown List */}
-      <select className="mx-2 rounded-lg bg-white px-2 py-1 text-gray-700 outline-none hover:bg-gray-100">
+      <select className="mx-2 rounded-lg bg-white px-2 py-1 text-gray-700 outline-none hover:bg-gray-100 ">
         {headers.map((entry) => (
           <option key={entry} value={entry}>
             {entry.charAt(0).toUpperCase() + entry.slice(1)}
@@ -35,7 +35,7 @@ export default function SearchBar({ headers }: SearchBarProps) {
       {/* Search Button */}
       <button
         type="button"
-        className="flex items-center rounded-l-lg bg-blue-500 px-3 py-2 text-white hover:bg-blue-600"
+        className="flex items-center rounded-l-lg bg-blue-500 px-3 py-2 text-white hover:bg-blue-600 "
         title="Hacer la búsqueda"
       >
         <MagnifyingGlassIcon className="h-5 w-5" />
@@ -45,7 +45,7 @@ export default function SearchBar({ headers }: SearchBarProps) {
       {/* Add Entry Button */}
       <button
         type="button"
-        className="flex items-center rounded-r-lg bg-green-500 px-3 py-2 text-white hover:bg-green-600"
+        className="flex items-center rounded-r-lg bg-green-500 px-3 py-2 text-white hover:bg-green-600 "
         title = "Añadir un nuevo registro"
       >
         <PlusIcon className="h-5 w-5" />

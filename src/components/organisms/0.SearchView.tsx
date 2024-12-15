@@ -64,7 +64,7 @@ export default function SearchView() {
       <div className="h-[63vh]">
         <SelectorBar botones={sections} clickFunction={setTable} activeTable={table}/>
         <div className="max-w relative z-30 w-full bg-white shadow-lg">
-          <div className="px-4 pt-4">
+          <div className="flex justify-center px-3 pt-3">
             <SearchBar headers={headers} />
           </div>
           <div className="p-4">
