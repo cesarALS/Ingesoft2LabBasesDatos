@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import { FaTrash } from "react-icons/fa";
+import { Modal } from "@/components/molecules/6.Modal"
 
 interface TableProps {
   headers: string[];
@@ -50,7 +51,7 @@ export default function ResultsTable({ headers, results }: TableProps) {
           </thead>
           <tbody>
             {results.map((entry) => (
-            <tr key={entry.id} className="border-b">
+            <tr key={entry.id} className="border-b hover:bg-gray-200">
               {Object.keys(entry).map((key) => (
                 <td key={key} className="text-center px-4 py-2">
                   {entry[key]}
@@ -78,10 +79,10 @@ export default function ResultsTable({ headers, results }: TableProps) {
           </tbody>
         </table>
       </div>
+      
       {/* Aviso de confirmación!!! */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50">
-          <div className="flex flex-col gap-4 justify-center bg-white p-8 rounded-md shadow-lg">
+      {showModal && <Modal son={
+          <>
             <h2 className="text-xl font-bold mb-4 text-center">¿Estás seguro de borrar este registro?</h2>
             <table className="w-full">
               <thead>
@@ -116,10 +117,9 @@ export default function ResultsTable({ headers, results }: TableProps) {
               >
                 Cancelar
               </button>
-            </div>
-          </div>
-        </div>
-      )}
+            </div>    
+          </>
+      }/>}
     </div>
   );
 }

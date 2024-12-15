@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import SelectorBar from "../molecules/3.SelectorBar";
 import SearchBar from "../molecules/4.SearchBar";
 import ResultsTable from "../molecules/5.ResultsTable";
+import LoadingWheel from "../atoms/1.LoadingWheel";
 
 const sections = ["Municipios", "Viviendas", "Personas", "Departamentos"];
 
@@ -41,27 +42,38 @@ function getTable(table: string){
 export default function SearchView() {
   const [table, setTable] = useState<string>(sections[1]);
   const [data, setData] = useState<{}>([]);
-  const [headers, setHeaders] = useState<string[]>([])
+  const [headers, setHeaders] = useState<string[]>([]);
+  const [isLoading, setLoading] = useState(false)
 
   // Hacer la búsqueda a la BD ahora que se cambió de pestaña
   useEffect(() => {
-    const { headers, data } = getTable(table);
-    setData(data);
-    setHeaders(headers);
+    setLoading(true);
+    const timeoutId = setTimeout(() => {
+      const { headers, data } = getTable(table);
+      setData(data);
+      setHeaders(headers);
+      setLoading(false);
+    }, 2000);
+
+    // Cleanup timeout when the component unmounts or updates
+    return () => clearTimeout(timeoutId);
   }, [table])
 
   return (
-    <div className="h-[63vh]">
-      <SelectorBar botones={sections} clickFunction={setTable} activeTable={table}/>
-      <div className="max-w relative z-30 w-full bg-white shadow-lg">
-        <div className="px-4 pt-4">
-          <SearchBar headers={headers} />
-        </div>
-        <div className="p-4">
-          {/* Aquí va el contenido de la búsqueda */}
-            <ResultsTable headers={headers} results={data}/>
+    <>
+      <div className="h-[63vh]">
+        <SelectorBar botones={sections} clickFunction={setTable} activeTable={table}/>
+        <div className="max-w relative z-30 w-full bg-white shadow-lg">
+          <div className="px-4 pt-4">
+            <SearchBar headers={headers} />
+          </div>
+          <div className="p-4">
+            {/* Aquí va el contenido de la búsqueda */}
+              <ResultsTable headers={headers} results={data}/>
+          </div>
         </div>
       </div>
-    </div>
+      {isLoading && <LoadingWheel />}
+    </>
   );
 }
