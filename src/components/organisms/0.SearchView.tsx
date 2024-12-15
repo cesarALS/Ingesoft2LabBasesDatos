@@ -9,12 +9,12 @@ import LoadingWheel from "../atoms/1.LoadingWheel";
 const tableNames = ["Municipios", "Viviendas", "Personas", "Departamentos"];
 
 export interface Table {
-  headers: [{}],
-  data: [{}],
-  modifiable: boolean
+  headers: Array<{ name: string, type: string, modifiable: boolean, foreign_key: boolean }>;
+  data: Array<{ [key: string]: string | number | Date }>;  // Cada entrada en `data` tiene claves de tipo string y valores que pueden ser string, number o Date.
+  modifiable: boolean;
 }
 
-function getTable(table: string) {
+function getTable(table: string): Table {
 
   if (table == tableNames[2]){
     return {      
@@ -56,8 +56,14 @@ function getTable(table: string) {
 };
 
 export default function SearchView() {
+  const defaultTable: Table = {
+    headers: [],
+    data: [],
+    modifiable: false,
+  };
+  
   const [tableName, setTableName] = useState<string>(tableNames[0]);
-  const [tableData, setTableData] = useState<Table>()
+  const [tableData, setTableData] = useState<Table | null>(defaultTable);
   const [isLoading, setLoading] = useState(false)
 
   // Hacer la búsqueda a la BD ahora que se cambió de pestaña
@@ -65,7 +71,7 @@ export default function SearchView() {
     setLoading(true);
     const timeoutId = setTimeout(() => {
       setTableData(getTable(tableName));
-      setLoading(false);      
+      setLoading(false); 
     }, 500);
 
     // Cleanup timeout when the component unmounts or updates
