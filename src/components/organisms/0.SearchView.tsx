@@ -6,70 +6,83 @@ import SearchBar from "../molecules/4.SearchBar";
 import ResultsTable from "../molecules/5.ResultsTable";
 import LoadingWheel from "../atoms/1.LoadingWheel";
 
-const sections = ["Municipios", "Viviendas", "Personas", "Departamentos"];
+const tableNames = ["Municipios", "Viviendas", "Personas", "Departamentos"];
 
-function getTable(table: string){
-  
-  //Esta función recoge la tabla de la BD a partir de su nombre,
-  //y la recibe como un objeto json, para mostrarla
+export interface Table {
+  headers: [{}],
+  data: [{}],
+  modifiable: boolean
+}
 
-  if (table == sections[0]){
-    return {
-      headers:["id", "name", "email", "date"],
+function getTable(table: string) {
+
+  if (table == tableNames[2]){
+    return {      
+      headers: [
+        {name: "id", type: "integer", modifiable: false, foreign_key: false , },
+        {name: "nombre", type: "string", modifiable: true, foreign_key: false, },
+        {name: "teléfono", type: "integer", modifiable: true, foreign_key: false, },
+        {name: "fecha nacimiento", type: "date", modifiable: true, foreign_key: false, },        
+        {name: "género", type: "string", modifiable: true, foreign_key: true, },        
+      ],
       data: [
-        { id: 1, name: "John Doe", email: "john@example.com", date: "2024-12-14" },
-        { id: 2, name: "Jane Smith", email: "jane@example.com", date: "2024-12-15"},
-        {id: 3, name: "Jane Smith",email: "jane@example.com",date: "2024-12-15"},
-        {id: 4,name: "Jane Smith",email: "jane@example.com",date: "2024-12-15"},
-        {id: 5,name: "Jane Smith",email: "jane@example.com",date: "2024-12-15",},
-        {id: 6,name: "Jane Smith",email: "jane@example.com",date: "2024-12-15",},
-        {id: 7,name: "Jane Smith",email: "jane@example.com",date: "2024-12-15",},
-      ]
+        {id: 1, name: "John Doe", telefono: "3239807193",date: "2024-12-14", genero: "Masculino" },
+        {id: 2, name: "Jane Smith", telefono: "3128790276",date: "2001-04-10", genero: "Femenino"},
+        {id: 3, name: "Robert Hemingway", telefono: "3417890645",date: "1990-01-13", genero: "Masculino"},
+        {id: 4, name: "Lady Maria", telefono: "3124150990",date: "2006-11-15", genero: "Femenino"},
+        {id: 5, name: "Arnold Crusoe", telefono: "3102502360",date: "1963-07-28", genero: "Masculino"},
+        {id: 6, name: "Linda Bruce", telefono: "3165893211",date: "1978-09-21", genero: "Femenino"},
+        {id: 7, name: "Rosario Lanús", telefono: "3124569823",date: "2002-07-02", genero: "Otro"},
+      ],
+      modifiable: true
     };
   }else{
     return {
-      headers:["id", "name", "email"],
-      data:[
-        { id: 1, name: "John Doe", email: "john@example.com"},
-        { id: 2, name: "Jane Smith", email: "jane@example.com"},
-        {id: 3, name: "Jane Smith",email: "jane@example.com"},
-        {id: 4,name: "Jane Smith",email: "jane@example.com"},
-      ]
+      headers: [
+        {name: "nombre", type: "string", modifiable: false, foreign_key: false},
+        {name: "superficie", type: "float", modifiable: false, foreign_key: false},
+        {name: "poblacion", type: "integer", modifiable: false, foreign_key: false},
+        {name: "gobernador", type: "string", modifiable: false, foreign_key: false},
+      ],
+      data: [
+        {nombre: "Cundinamarca", superficie:24210.00, poblacion: 3243000, gobernador: "Jorge Emilio Rey"},
+        {nombre: "Antioquia", superficie:63612.00, poblacion: 6995846, gobernador: "Andrés Julián Rendón"},
+        {nombre: "Bolivar", superficie:25978.00, poblacion: 2258929, gobernador: "Yamil Hernando Arana"},
+        {nombre: "Valle del Cauca", superficie:22195.00, poblacion: 4923456, gobernador: "Dilian Francisca Toro"},
+      ],
+      modifiable: true
     }
   }
 };
 
 export default function SearchView() {
-  const [table, setTable] = useState<string>(sections[1]);
-  const [data, setData] = useState<{}>([]);
-  const [headers, setHeaders] = useState<string[]>([]);
+  const [tableName, setTableName] = useState<string>(tableNames[0]);
+  const [tableData, setTableData] = useState<Table>()
   const [isLoading, setLoading] = useState(false)
 
   // Hacer la búsqueda a la BD ahora que se cambió de pestaña
   useEffect(() => {
     setLoading(true);
     const timeoutId = setTimeout(() => {
-      const { headers, data } = getTable(table);
-      setData(data);
-      setHeaders(headers);
-      setLoading(false);
+      setTableData(getTable(tableName));
+      setLoading(false);      
     }, 500);
 
     // Cleanup timeout when the component unmounts or updates
     return () => clearTimeout(timeoutId);
-  }, [table])
+  }, [tableName])
 
   return (
     <>
       <div className="h-[63vh]">
-        <SelectorBar botones={sections} clickFunction={setTable} activeTable={table}/>
+        <SelectorBar botones={tableNames} clickFunction={setTableName} activeTable={tableName}/>
         <div className="max-w relative z-30 w-full bg-white shadow-lg">
           <div className="flex justify-center px-3 pt-3">
-            <SearchBar headers={headers} />
+            <SearchBar headers={tableData?.headers} />
           </div>
           <div className="p-4">
             {/* Aquí va el contenido de la búsqueda */}
-              <ResultsTable headers={headers} results={data}/>
+              <ResultsTable tableData={tableData}/>
           </div>
         </div>
       </div>
