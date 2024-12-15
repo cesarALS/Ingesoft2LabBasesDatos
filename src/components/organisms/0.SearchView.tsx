@@ -9,9 +9,8 @@ import LoadingWheel from "../atoms/1.LoadingWheel";
 const tableNames = ["Municipios", "Viviendas", "Personas", "Departamentos"];
 
 export interface Table {
-  headers: Array<{ name: string, type: string, modifiable: boolean, foreign_key: boolean }>;
+  headers: Array<{ name: string, type: string, modifiable: boolean}>;
   data: Array<{ [key: string]: string | number | Date }>;  // Cada entrada en `data` tiene claves de tipo string y valores que pueden ser string, number o Date.
-  modifiable: boolean;
 }
 
 function getTable(table: string): Table {
@@ -19,11 +18,11 @@ function getTable(table: string): Table {
   if (table == tableNames[2]){
     return {      
       headers: [
-        {name: "id", type: "integer", modifiable: false, foreign_key: false , },
-        {name: "nombre", type: "string", modifiable: true, foreign_key: false, },
-        {name: "teléfono", type: "integer", modifiable: true, foreign_key: false, },
-        {name: "fecha nacimiento", type: "date", modifiable: true, foreign_key: false, },        
-        {name: "género", type: "string", modifiable: true, foreign_key: true, },        
+        {name: "id", type: "integer", modifiable: false},
+        {name: "nombre", type: "string", modifiable: true},
+        {name: "teléfono", type: "integer", modifiable: true},
+        {name: "fecha nacimiento", type: "date", modifiable: true},        
+        {name: "género", type: "string", modifiable: true},        
       ],
       data: [
         {id: 1, name: "John Doe", telefono: "3239807193",date: "2024-12-14", genero: "Masculino" },
@@ -33,24 +32,22 @@ function getTable(table: string): Table {
         {id: 5, name: "Arnold Crusoe", telefono: "3102502360",date: "1963-07-28", genero: "Masculino"},
         {id: 6, name: "Linda Bruce", telefono: "3165893211",date: "1978-09-21", genero: "Femenino"},
         {id: 7, name: "Rosario Lanús", telefono: "3124569823",date: "2002-07-02", genero: "Otro"},
-      ],
-      modifiable: true
+      ]
     };
   }else{
     return {
       headers: [
-        {name: "nombre", type: "string", modifiable: false, foreign_key: false},
-        {name: "superficie", type: "float", modifiable: false, foreign_key: false},
-        {name: "poblacion", type: "integer", modifiable: false, foreign_key: false},
-        {name: "gobernador", type: "string", modifiable: false, foreign_key: false},
+        {name: "nombre", type: "string", modifiable: false},
+        {name: "superficie", type: "float", modifiable: false},
+        {name: "poblacion", type: "integer", modifiable: true},
+        {name: "gobernador", type: "string", modifiable: false},
       ],
       data: [
         {nombre: "Cundinamarca", superficie:24210.00, poblacion: 3243000, gobernador: "Jorge Emilio Rey"},
         {nombre: "Antioquia", superficie:63612.00, poblacion: 6995846, gobernador: "Andrés Julián Rendón"},
         {nombre: "Bolivar", superficie:25978.00, poblacion: 2258929, gobernador: "Yamil Hernando Arana"},
         {nombre: "Valle del Cauca", superficie:22195.00, poblacion: 4923456, gobernador: "Dilian Francisca Toro"},
-      ],
-      modifiable: true
+      ]
     }
   }
 };
@@ -59,7 +56,6 @@ export default function SearchView() {
   const defaultTable: Table = {
     headers: [],
     data: [],
-    modifiable: false,
   };
   
   const [tableName, setTableName] = useState<string>(tableNames[0]);

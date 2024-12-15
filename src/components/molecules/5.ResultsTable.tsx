@@ -14,7 +14,7 @@ interface ResultsTableProps {
 
 export default function ResultsTable({ tableData }: ResultsTableProps) {
 
-  const {headers, data, modifiable} = tableData
+  const {headers, data } = tableData
   
   const [showModal, setShowModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<any>(null);
