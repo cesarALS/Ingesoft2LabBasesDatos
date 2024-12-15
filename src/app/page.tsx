@@ -7,7 +7,7 @@ export default function Main() {
   return (
     // Donde va todo el contenido de la página, centradito y con padding en todas las direcciones, aqui van los tres bloques, el header, el footer y el viewport
     // En el viewport se muestra la barra de busqueda, las pestanas de cada tipo de contenido y también los modos de adición y edición de contenido
-    <div className="m-gray-500 mx-14 my-10 bg-gray-100">
+    <div className="m-gray-500 mx-14 my-6 bg-gray-100">
       <Header />
 
       {/* Este sería el viewport, la idea es cambiar esta SearchView por la UpdateView según sea necesario (next tiene cosas para esto, hay varias maneras de hacerlo), luego después de haber hecho cambios en la entrada respectiva en la UpdateView, guardar y poder volver a la SearchView */}

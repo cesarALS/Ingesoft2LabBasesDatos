@@ -19,14 +19,16 @@ interface TableProps {
 // El componente recibe un arreglo de strings con los nombres de las cabeceras y un arreglo de objetos con las entradas de la tabla, falta asignar las funciones a los botones de editar y eliminar, el editar debería abrir el UpdateView con la información de la entrada respectiva y el eliminar debería eliminar la entrada respectiva, tanto en la base de datos como aquí en el front
 
 export default function ResultsTable({ headers, results }: TableProps) {
+  
+  
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto h-[40vh] rounded-md">
       <table className="min-w-full table-auto border-collapse">
         <thead>
           <tr>
-            {headers.map((entry) => (
-              <th key={entry} className="border-b px-4 py-2 bg-gray-300">
-                {entry}
+            {headers.map((header, index) => (
+              <th key={index} className="border-b px-4 py-2 bg-gray-300">
+                {header.charAt(0).toUpperCase() + header.slice(1)}
               </th>
             ))}
             <th className="border-b px-4 py-2 bg-gray-300">Editar</th>

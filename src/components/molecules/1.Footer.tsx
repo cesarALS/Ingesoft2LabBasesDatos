@@ -6,7 +6,7 @@ export default function Footer() {
     <footer>
       <div className="flex justify-center bottom-0 border-collapse">
         <div className = "items-center flex w-[80%] bg-white shadow-lg my-2 pt-3 pb-3">
-          <div className ="grid text-left w-[30%] pl-[10%]">
+          <div className ="grid text-left w-[30%] pl-[10%]">  
             <h1 className="text-[1.1em] font-bold">Team Demokratica</h1>
             <ul className="text-[0.7em]">
               <li>David Felipe Marín Rosas</li>
