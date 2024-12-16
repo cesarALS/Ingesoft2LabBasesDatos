@@ -9,17 +9,19 @@ datasource db {
 
 model Vivienda {
   id        Int                    @id @default(autoincrement())
-  direccion String                 @map("Dirección") @db.VarChar(45)
-  tamano    Int                    @map("Tamaño")
+  direccion String                 @db.VarChar(45)
+  tamano    Int                    
   pisos     Int
+  municipioId Int
+  municipio Municipio              @relation(fields: [municipioId], references: [id])
   personas  Persona[]              @relation("PersonaVivienda")
   viviendas Persona_has_Vivienda[]
 }
 
 model Departamento {
   nombre     String      @id @db.VarChar(30)
-  area       Float       @map("Área")
-  poblacion  Int         @map("Población")
+  area       Float       
+  poblacion  Int         
   gobernador String      @db.VarChar(60)
   municipios Municipio[]
 }
@@ -27,19 +29,20 @@ model Departamento {
 model Municipio {
   id                 Int          @id @default(autoincrement())
   nombre             String       @db.VarChar(30)
-  area               Float        @map("Área")
-  poblacion          Int          @map("Población")
+  area               Float        
+  poblacion          Int          
   alcalde            String       @db.VarChar(60)
   departamentoNombre String
   departamento       Departamento @relation(fields: [departamentoNombre], references: [nombre])
   personas           Persona[]
+  viviendas          Vivienda[]
 }
 
 model Persona {
   id              Int                    @id
-  nombre          String                 @map("Nombre_completo") @db.VarChar(60)
-  telefono        String                 @map("Teléfono") @db.VarChar(10)
-  fechaNacimiento DateTime               @map("Fecha_nacimiento")
+  nombre          String                 @db.VarChar(60)
+  telefono        String                 @db.VarChar(10)
+  fechaNacimiento DateTime               
   genero          Int?
   viviendaId      Int
   municipioId     Int
