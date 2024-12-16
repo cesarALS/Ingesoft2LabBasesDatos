@@ -6,7 +6,7 @@ import SearchBar from "../molecules/4.SearchBar";
 import ResultsTable from "../molecules/5.ResultsTable";
 import LoadingWheel from "../atoms/1.LoadingWheel";
 
-const tableNames = ["municipio", "vivienda", "persona", "departamento"];
+const tableNames = ["departamento", "municipio", "vivienda", "persona",];
 
 export interface Table {
   headers: Array<{ name: string, type: string, modifiable: boolean}>;
