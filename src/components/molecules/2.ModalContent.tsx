@@ -2,7 +2,7 @@ import ModalTable from "@/components/atoms/2.ModalTable"
 
 interface ModalContentProps{
     title: string,
-    type: string,
+    actionType: string,
     headers: [{}],
     entry: {},
     confirmAction: Function,
@@ -11,7 +11,7 @@ interface ModalContentProps{
 }
 
 export default function ModalContent( {
-    title, type, headers, entry, confirmAction, cancelAction, firstButton } : ModalContentProps
+    title, actionType, headers, entry, confirmAction, cancelAction, firstButton } : ModalContentProps
 ){        
     
     return(
@@ -19,7 +19,7 @@ export default function ModalContent( {
             <h2 className="text-xl font-bold mb-4 text-center">
                 {title}
             </h2>    
-            <ModalTable headers = {headers} entry = {entry} type = {type}/>
+            <ModalTable headers = {headers} entry = {entry} actionType = {actionType}/>
             <div className="flex justify-center gap-6">
                 <button
                 onClick={confirmAction}

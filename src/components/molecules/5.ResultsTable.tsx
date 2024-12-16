@@ -120,7 +120,7 @@ export default function ResultsTable({ tableData }: ResultsTableProps) {
         <Modal son={
           <ModalContent 
             title={"¿Estás seguro de borrar este registro?"}
-            type = {"delete"}
+            actionType = {"delete"}
             headers={headers}
             entry={itemToDelete}
             confirmAction={confirmDelete}
@@ -135,7 +135,7 @@ export default function ResultsTable({ tableData }: ResultsTableProps) {
         <Modal son = {
           <ModalContent 
           title = {"Modifica el registro"}
-          type = {"update"}
+          actionType = {"update"}
           headers = {headers}
           entry = {itemToUpdate}
           confirmAction = {confirmUpdate}
