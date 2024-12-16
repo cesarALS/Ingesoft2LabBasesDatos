@@ -33,7 +33,7 @@ export default function ModalTable( { headers, entry, type }: ModalTableProps ){
             <tbody>
                 <tr key="unique-entry" className="border-b">
                     {Object.keys(entry).map((key, index) => (
-                        <td key={key}>                        
+                        <td key={key} className="text-center py-2 px-2">                        
                             {modifiableIndices.includes(index) ? (
                                 <input
                                     type="text"
