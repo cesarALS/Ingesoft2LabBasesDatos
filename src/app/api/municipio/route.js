@@ -46,6 +46,9 @@ export async function GET(request, {params}) {
             modifiable: columnasModificables.includes(col.column_name),        
         }));       
 
+        headers.push({
+            erasable: false
+        });
 
         //console.log(data)
         return NextResponse.json({headers,data})       
