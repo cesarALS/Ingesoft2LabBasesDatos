@@ -5,10 +5,20 @@ function capitalizeFirstLetter(input: string): string {
 
 interface ModalTableProps {
     headers: [{}],
-    entry: {}
+    entry: {},
+    type: string
 }
 
-export default function ModalTable( { headers, entry }: ModalTableProps ){
+export default function ModalTable( { headers, entry, type }: ModalTableProps ){
+    
+    var modifiableIndices: number[] = []
+    
+    if (type == "update"){
+        modifiableIndices = headers
+            .map((header, index) => (header.modifiable ? index : -1))
+            .filter(index => index !== -1);
+    }
+    
     return (
         <table>
             <thead>
@@ -21,13 +31,25 @@ export default function ModalTable( { headers, entry }: ModalTableProps ){
                 </tr>
             </thead>
             <tbody>
-              <tr key="unique-entry" className="border-b">
-                {Object.keys(entry).map((key) => (
-                    <td key={key} className="text-center px-4 py-2">
-                        {entry[key]}
-                    </td>
-                ))}
-                </tr>              
+                <tr key="unique-entry" className="border-b">
+                    {Object.keys(entry).map((key, index) => (
+                        <td key={key}>                        
+                            {modifiableIndices.includes(index) ? (
+                                <input
+                                    type="text"
+                                    placeholder={entry[key]}
+                                    value={""}
+                                    onChange={(e) => {
+                                        const updatedEntry = { ...entry, [key]: e.target.value };
+                                    }}
+                                    className="px-2 py-1 rounded-md hover:bg-gray-200 selected:bg-gray-200"
+                                />
+                            ) : (
+                                entry[key]
+                            )}
+                        </td>
+                    ))}
+                </tr>            
             </tbody>            
         </table>
     )
