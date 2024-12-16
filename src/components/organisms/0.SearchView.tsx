@@ -6,15 +6,17 @@ import SearchBar from "../molecules/4.SearchBar";
 import ResultsTable from "../molecules/5.ResultsTable";
 import LoadingWheel from "../atoms/1.LoadingWheel";
 
-const tableNames = ["Municipios", "Viviendas", "Personas", "Departamentos"];
+const tableNames = ["municipio", "vivienda", "persona", "departamento"];
 
 export interface Table {
   headers: Array<{ name: string, type: string, modifiable: boolean}>;
-  data: Array<{ [key: string]: string | number | Date }>;  // Cada entrada en `data` tiene claves de tipo string y valores que pueden ser string, number o Date.
+  data: Array<{ [key: string | number]: string | number | Date }>;  // Cada entrada en `data` tiene claves de tipo string y valores que pueden ser string, number o Date.
 }
 
-function getTable(table: string): Table {
+async function getTable(table: string): Promise<Table> {
 
+  fetch(`api/${table}`)
+  
   if (table == tableNames[2]){
     return {      
       headers: [
