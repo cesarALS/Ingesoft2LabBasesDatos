@@ -3,6 +3,7 @@ import { PencilIcon } from "@heroicons/react/24/solid";
 import { FaTrash } from "react-icons/fa";
 import { Modal } from "@/components/molecules/6.Modal"
 import { Table } from "@/components/organisms/0.SearchView"
+import ModalContent from "@/components/molecules/2.ModalContent"
 
 // Tanto las entradas como las cabeceras de la tabla son dinámicas, falta también asignar las acciones a los botones de editar y eliminar, hay varias maneras de hacerlo, aunque creo que la ideal es por contexto o por la ruta actual, para que todo dependa de la pestaña en la que uno se encuentre actualmente
 
@@ -14,10 +15,11 @@ interface ResultsTableProps {
 
 export default function ResultsTable({ tableData }: ResultsTableProps) {
 
-  const {headers, data } = tableData
+  const { headers, data } = tableData
   
   const [showModal, setShowModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<any>(null);
+  const [itemToUpdate, setItemToUpdate] = useState<any>(null);
 
   const handleDelete = (entry: {}) => {
     // Muestra el modal cuando se presiona el botón de eliminar
@@ -32,7 +34,23 @@ export default function ResultsTable({ tableData }: ResultsTableProps) {
     }
   };
 
-  const cancelDelete = () => {
+  //------------------------------------------------------------------------
+
+  const handleUpdate = (entry: {}) => {
+    setItemToUpdate(entry);
+    setShowModal(true);
+  }
+
+  const confirmUpdate = () => {
+    if (itemToUpdate) {
+      // La función que actualiza el item
+      setShowModal(false);
+    }
+  }
+
+  const cancel = () => {
+    setItemToDelete(null);
+    setItemToUpdate(null);
     setShowModal(false);
   };
 
@@ -62,6 +80,7 @@ export default function ResultsTable({ tableData }: ResultsTableProps) {
                 <button 
                 className="flex items-center justify-center rounded-l bg-blue-500 px-2 py-2 text-white hover:bg-blue-600"
                 title = "Editar este registro"
+                onClick={() => handleUpdate(entry)}
                 >
                   {/* Botón Editar */}
                   <PencilIcon className="h-5 w-5" />
@@ -81,50 +100,35 @@ export default function ResultsTable({ tableData }: ResultsTableProps) {
         </table>
       </div>
       
-      {/* Aviso de confirmación!!! */}
+      {/* PopUp de Delete */}
       {showModal && itemToDelete && (
-      <Modal son={
-        <>
-          <h2 className="text-xl font-bold mb-4 text-center">
-            ¿Estás seguro de borrar este registro?
-          </h2>
-          <table className="w-full">
-            <thead>
-              <tr>
-                {headers.map((header, index) => (
-                  <th key={index} className="border-b px-4 py-2 bg-gray-300 text-center border-2">
-                    {header.name.charAt(0).toUpperCase() + header.name.slice(1)}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              <tr key={itemToDelete.id} className="border-b">
-                {Object.keys(itemToDelete).map((key) => (
-                  <td key={key} className="text-center px-4 py-2">
-                    {itemToDelete[key]}
-                  </td>
-                ))}
-              </tr>
-            </tbody>
-          </table>
-          <div className="flex justify-center gap-6">
-            <button
-              onClick={confirmDelete}
-              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-            >
-              Sí, borrar
-            </button>
-            <button
-              onClick={cancelDelete}
-              className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
-            >
-              Cancelar
-            </button>
-          </div>
-        </>
-      } />
-    )}
+        <Modal son={
+          <ModalContent 
+            title={"¿Estás seguro de borrar este registro?"}
+            type = {"delete"}
+            headers={headers}
+            entry={itemToDelete}
+            confirmAction={confirmDelete}
+            cancelAction={cancel}
+            firstButton={{text: "Borrar", color:"bg-red-500", hoverColor: "bg-red-600"}}
+          />
+        } />
+      )}
+
+      {/* Ventana de edición!!! */}
+      {showModal && itemToUpdate && (
+        <Modal son = {
+          <ModalContent 
+          title = {"Modifica el registro"}
+          type = {"update"}
+          headers = {headers}
+          entry = {itemToUpdate}
+          confirmAction = {confirmUpdate}
+          cancelAction = {cancel}
+          firstButton={{text: "Actualizar", color:"bg-yellow-400", hoverColor: "bg-yellow-600"}}
+          />
+        } />
+      )}
     </div>
   );
 }
