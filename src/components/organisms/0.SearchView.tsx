@@ -11,8 +11,11 @@ const tableNames = ["departamento", "municipio", "vivienda", "persona",];
 export interface Table {
   headers: Array<{ name: string, type: string, modifiable: boolean}>;
   data: Array<{ [key: string | number]: string | number | Date }>;  // Cada entrada en `data` tiene claves de tipo string y valores que pueden ser string, number o Date.
+  erasable: boolean
 }
 
+
+// Esta función hace la búsqueda asincrónica a la base de datos:
 async function getTable(table: string): Promise<Table> {
 
   try {
@@ -23,12 +26,14 @@ async function getTable(table: string): Promise<Table> {
       return {
         headers: data.headers,
         data: data.data,
+        erasable: true,
       };
     } else {
       console.error('Error al obtener los datos:', response.statusText);
       return {
         headers: [],
         data: [],
+        erasable: true,
       };
     }
   } catch (error) {
@@ -36,19 +41,22 @@ async function getTable(table: string): Promise<Table> {
     return {
       headers: [],
       data: [],
+      erasable: true,
     };
   }
 
 };
 
+// El SearchView es la suma de la barra de búsqueda
 export default function SearchView() {
   const defaultTable: Table = {
     headers: [],
     data: [],
+    erasable: true,
   };
   
   const [tableName, setTableName] = useState<string>(tableNames[0]);
-  const [tableData, setTableData] = useState<Table | null>(defaultTable);
+  const [tableData, setTableData] = useState<Table>(defaultTable);
   const [isLoading, setLoading] = useState(false)
 
   // Hacer la búsqueda a la BD ahora que se cambió de pestaña
@@ -65,13 +73,15 @@ export default function SearchView() {
 
   }, [tableName])
 
+
+
   return (
     <>
       <div className="h-[63vh]">
         <SelectorBar botones={tableNames} clickFunction={setTableName} activeTable={tableName}/>
         <div className="max-w relative z-30 w-full bg-white shadow-lg">
           <div className="flex justify-center px-3 pt-3">
-            <SearchBar headers={tableData?.headers} />
+            <SearchBar headers={tableData.headers} erasable={tableData.erasable} />
           </div>
           <div className="p-4">
             {/* Aquí va el contenido de la búsqueda */}

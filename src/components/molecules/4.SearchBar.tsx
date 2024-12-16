@@ -1,15 +1,16 @@
 import React from "react";
-import { MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/24/solid";
+import { MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/24/solid"
 
 interface SearchBarProps {
-  headers: Array<{ name: string, type: string, modifiable: boolean, foreign_key: boolean }>;
+  headers: Array<{ name: string, type: string, modifiable: boolean, }>;
+  erasable: boolean
 }
 
 // Aquí hay que pasar los campos de la pestaña elegida para que sirvan como opciones, falta también hacer funcionar el botón de busqueda y el de agregar entrada para que muestre la CreateView respectiva, que debería funcionar majo menos igual que la UpdateView, pero con los campos vacíos
 
 // Falta también programar la busqueda, que no es sino actualizar componentes después de haber hecho el query a la base de datos
 
-export default function SearchBar({ headers }: SearchBarProps) {
+export default function SearchBar({ headers, erasable }: SearchBarProps) {
   
   return (
     <div className="m-2 flex items-center rounded-lg bg-gray-200 hover:bg-gray-300 w-[75%]">
@@ -32,25 +33,40 @@ export default function SearchBar({ headers }: SearchBarProps) {
         ))}
       </select>
 
-      {/* Search Button */}
-      <button
-        type="button"
-        className="flex items-center rounded-l-lg bg-blue-500 px-3 py-2 text-white hover:bg-blue-600 "
-        title="Hacer la búsqueda"
-      >
-        <MagnifyingGlassIcon className="h-5 w-5" />
-        <span className="sr-only">Search</span> {/* For accessibility */}
-      </button>
+      { erasable ? (          
+        <>
+          <button
+            type="button"
+            className="flex items-center rounded-l-lg bg-blue-500 px-3 py-2 text-white hover:bg-blue-600 "
+            title="Hacer la búsqueda"
+          >
+            <MagnifyingGlassIcon className="h-5 w-5" />
+            <span className="sr-only">Search</span> {/* For accessibility */}
+          </button>
 
-      {/* Add Entry Button */}
-      <button
-        type="button"
-        className="flex items-center rounded-r-lg bg-green-500 px-3 py-2 text-white hover:bg-green-600 "
-        title = "Añadir un nuevo registro"
-      >
-        <PlusIcon className="h-5 w-5" />
-        <span className="sr-only">Add Entry</span> {/* For accessibility */}
-      </button>
+          <button
+            type="button"
+            className="flex items-center rounded-r-lg bg-green-500 px-3 py-2 text-white hover:bg-green-600 "
+            title = "Añadir un nuevo registro"
+          >
+            <PlusIcon className="h-5 w-5" />
+            <span className="sr-only">Add Entry</span> {/* For accessibility */}
+          </button>        
+        </>
+      ) : (
+        <>
+        <button
+          type="button"
+          className="flex items-center rounded-md bg-blue-500 px-3 py-2 text-white hover:bg-blue-600 "
+          title="Hacer la búsqueda"
+        >
+          <MagnifyingGlassIcon className="h-5 w-5" />
+          <span className="sr-only">Search</span> {/* For accessibility */}
+        </button>          
+        </>
+      )
+      }
+
     </div>
   );
 }

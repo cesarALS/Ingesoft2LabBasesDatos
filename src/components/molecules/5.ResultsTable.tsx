@@ -15,7 +15,7 @@ interface ResultsTableProps {
 
 export default function ResultsTable({ tableData }: ResultsTableProps) {
 
-  const { headers, data } = tableData
+  const { headers, data, erasable } = tableData
   
   const [showModal, setShowModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<any>(null);
@@ -77,22 +77,37 @@ export default function ResultsTable({ tableData }: ResultsTableProps) {
                 </td>
               ))}
               <td className="flex justify-center px-4 py-2">
-                <button 
-                className="flex items-center justify-center rounded-l bg-blue-500 px-2 py-2 text-white hover:bg-blue-600"
-                title = "Editar este registro"
-                onClick={() => handleUpdate(entry)}
-                >
-                  {/* Botón Editar */}
-                  <PencilIcon className="h-5 w-5" />
-                </button>
-                <button 
-                className="flex items-center justify-center rounded-r bg-red-500 px-2 py-2 text-white hover:bg-red-600"
-                title = "Borrar este registro"
-                onClick={() => handleDelete(entry)}
-                >
-                  {/* Botón Eliminar */}
-                  <FaTrash className="h-5 w-5" />
-                </button>
+                {erasable ? (
+                    <>
+                      <button 
+                      className="flex items-center justify-center rounded-l bg-blue-500 px-2 py-2 text-white hover:bg-blue-600"
+                      title = "Editar este registro"
+                      onClick={() => handleUpdate(entry)}
+                      >
+                        {/* Botón Editar */}
+                        <PencilIcon className="h-5 w-5" />
+                      </button>                      
+                      <button 
+                      className="flex items-center justify-center rounded-r bg-red-500 px-2 py-2 text-white hover:bg-red-600"
+                      title = "Borrar este registro"
+                      onClick={() => handleDelete(entry)}
+                      >
+                        {/* Botón Eliminar */}
+                        <FaTrash className="h-5 w-5" />
+                      </button>                    
+                    </>                    
+                  ) : (
+                    <button 
+                    className="flex items-center justify-center rounded-md bg-blue-500 px-2 py-2 text-white hover:bg-blue-600"
+                    title = "Editar este registro"
+                    onClick={() => handleUpdate(entry)}
+                    >
+                      {/* Botón Editar */}
+                      <PencilIcon className="h-5 w-5" />
+                    </button>    
+                  )
+                }
+
               </td>
             </tr>
           ))}
