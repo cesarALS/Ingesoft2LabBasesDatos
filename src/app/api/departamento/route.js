@@ -32,6 +32,7 @@ export async function GET(request, {params}) {
         
         // Determinar cuáles columnas son modificables
         const columnasModificables = ['Población','gobernador'];
+        const erasable = []
 
         // Formatear la información de las columnas
         const headers = columnasInfo.map((col) => ({
@@ -40,6 +41,9 @@ export async function GET(request, {params}) {
             modifiable: columnasModificables.includes(col.column_name),        
         }));       
 
+        headers.push({
+            erasable: false
+        });
 
         // console.log(data)
         return NextResponse.json({headers,data})       
@@ -49,3 +53,4 @@ export async function GET(request, {params}) {
     res.status(500).json({ error: 'Ocurrió un error al procesar la solicitud' });
     }    
   }
+

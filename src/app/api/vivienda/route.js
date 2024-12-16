@@ -47,6 +47,9 @@ export async function GET(request, {params}) {
             modifiable: columnasModificables.includes(col.column_name),        
         }));       
 
+        headers.push({
+            erasable: true
+        });
 
         //console.log(data)
         return NextResponse.json({headers,data})       
@@ -56,3 +59,19 @@ export async function GET(request, {params}) {
     res.status(500).json({ error: 'Ocurrió un error al procesar la solicitud' });
     }    
   }
+
+export async function DELETE(request, {params}){
+    try{
+        const {searchParams} = new URL(request.url);
+        const id = searchParams.get('id')
+        const vivendaEliminada = await prisma.vivienda.delete({
+            where: {
+                id : Number(id)
+            }
+        })
+    return NextResponse.json("Vivienda removida")
+    }catch(error) {
+        console.error('Error en el endpoint:', error);
+        return NextResponse.json({ error: 'Ocurrió un error al procesar la solicitud' });
+    }    
+}
