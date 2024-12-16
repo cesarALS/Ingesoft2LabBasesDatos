@@ -48,7 +48,7 @@ export async function GET(request, {params}) {
         }));       
 
 
-        console.log(data)
+        //console.log(data)
         return NextResponse.json({headers,data})       
 
     } catch (error) {
