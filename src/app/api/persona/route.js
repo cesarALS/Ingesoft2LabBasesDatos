@@ -26,8 +26,7 @@ export async function GET(request, {params}) {
         const data = await prisma.persona.findMany({
             //where: filters
         });
-        console.log(data)
-        console.log("xd")
+        
         // Consulta de nombres y tipos de columnas
         const columnasInfo = await prisma.$queryRaw
         `
