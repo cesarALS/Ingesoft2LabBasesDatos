@@ -4,20 +4,27 @@ import {prisma} from '@/libs/prisma'
 export async function GET(request, {params}) {
     try {
 
-        const {searchParams} = new URL(request.url);
-        const nombre = searchParams.get('nombre')
-        const area = searchParams.get('area')
-        const poblacion = searchParams.get('poblacion')
-        const gobernador = searchParams.get('gobernador')        
+        /*const {searchParams} = new URL(request.url);
+        const id = searchParams.get('id')
+        const nombre_completo = searchParams.get('nombre')
+        const telefono = searchParams.get('telefono')
+        const fecha_nacimiento = searchParams.get('fechaNacimiento')
+        const genero = searchParams.get('genero')
+        const vivienda = searchParams.get('vivienda')
+        const municipio = searchParams.get('municipio')
 
         const filters = {};
-        if (nombre) filters.nombre = { contains: nombre, mode: 'insensitive' }; // Búsqueda parcial
+        if (id) filters.id = id
+        if (nombre_completo) filters.nombre = { contains: nombre, mode: 'insensitive' }; // Búsqueda parcial
         if (area) filters.area = {lte : parseFloat(area)}; // Menor o igual al área
         if (poblacion) filters.poblacion = { lte: parseInt(poblacion) }; // Menor o igual a población
-        if (gobernador) filters.gobernador = { contains: gobernador, mode: 'insensitive' }; // Búsqueda parcial
-        console.log(filters)
-        const data = await prisma.departamento.findMany({
-            where: filters
+        if (alcalde) filters.gobernador = { contains: alcalde, mode: 'insensitive' }; // Búsqueda parcial
+        if (departamento) filters.departamento = { contains: departamento, mode: 'insensitive' }; // Búsqueda parcial
+
+        console.log(filters)*/
+
+        const data = await prisma.persona.findMany({
+            //where: filters
         });
 
         // Consulta de nombres y tipos de columnas
@@ -25,13 +32,13 @@ export async function GET(request, {params}) {
         `
             SELECT column_name, data_type
             FROM information_schema.columns
-            WHERE table_name = 'Departamento'
+            WHERE table_name = 'Persona'
             ORDER BY ordinal_position;
         `
         ;
         
         // Determinar cuáles columnas son modificables
-        const columnasModificables = ['Población','gobernador'];
+        const columnasModificables = ['Teléfono','genero','viviendaId','municipioId'];
 
         // Formatear la información de las columnas
         const headers = columnasInfo.map((col) => ({
