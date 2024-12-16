@@ -26,7 +26,7 @@ async function getTable(table: string): Promise<Table> {
       return {
         headers: data.headers,
         data: data.data,
-        erasable: true,
+        erasable: data.erasable,
       };
     } else {
       console.error('Error al obtener los datos:', response.statusText);

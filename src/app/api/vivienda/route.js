@@ -47,12 +47,8 @@ export async function GET(request, {params}) {
             modifiable: columnasModificables.includes(col.column_name),        
         }));       
 
-        headers.push({
-            erasable: true
-        });
-
         //console.log(data)
-        return NextResponse.json({headers,data})       
+        return NextResponse.json({headers,data,erasable:true})       
 
     } catch (error) {
     console.error('Error en el endpoint:', error);
