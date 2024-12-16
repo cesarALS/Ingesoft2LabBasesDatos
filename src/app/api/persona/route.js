@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server"
 import {prisma} from '@/libs/prisma'
+import JSONBig from 'json-bigint';
 
-export async function GET(request, {params}) {
-    try {
+export async function GET(request, {params}) {    
 
         /*const {searchParams} = new URL(request.url);
         const id = searchParams.get('id')
@@ -26,7 +26,8 @@ export async function GET(request, {params}) {
         const data = await prisma.persona.findMany({
             //where: filters
         });
-
+        console.log(data)
+        console.log("xd")
         // Consulta de nombres y tipos de columnas
         const columnasInfo = await prisma.$queryRaw
         `
@@ -38,7 +39,7 @@ export async function GET(request, {params}) {
         ;
         
         // Determinar cuáles columnas son modificables
-        const columnasModificables = ['Teléfono','genero','viviendaId','municipioId'];
+        const columnasModificables = ['telefono','genero','vivienda_id'];
 
         // Formatear la información de las columnas
         const headers = columnasInfo.map((col) => ({
@@ -47,13 +48,19 @@ export async function GET(request, {params}) {
             modifiable: columnasModificables.includes(col.column_name),        
         }));       
 
-        //console.log(data)
-        return NextResponse.json({headers,data, erasable:true})       
+        
+        // Cuerpo de la respuesta
+        const responseBody = { headers, data, erasable: true };
 
-    } catch (error) {
-    console.error('Error en el endpoint:', error);
-    res.status(500).json({ error: 'Ocurrió un error al procesar la solicitud' });
-    }    
+        // Serializar usando JSONBig
+        const serializedBody = JSONBig.stringify(responseBody);
+
+        // Crear la respuesta manualmente con NextResponse
+        return new NextResponse(serializedBody, {
+            headers: { 'Content-Type': 'application/json' },
+            status: 200,
+        });      
+     
   }
   
   

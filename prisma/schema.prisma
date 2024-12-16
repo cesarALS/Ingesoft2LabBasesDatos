@@ -13,7 +13,7 @@ model Vivienda {
   tamano      Int
   pisos       Int
   municipioId Int
-  personas    Persona[]              @relation("PersonaVivienda")
+  Persona     Persona[]
   viviendas   Persona_has_Vivienda[]
   municipio   Municipio              @relation(fields: [municipioId], references: [id])
 }
@@ -38,21 +38,21 @@ model Municipio {
 }
 
 model Persona {
-  id              Int                    @id
-  nombre          String                 @db.VarChar(60)
-  telefono        String                 @db.VarChar(10)
-  fechaNacimiento DateTime
-  genero          Int?
-  viviendaId      Int
-  responsables    Dependientes[]         @relation("Dependientes")
-  dependientes    Dependientes[]         @relation("Responsables")
-  vivienda        Vivienda               @relation("PersonaVivienda", fields: [viviendaId], references: [id])
-  viviendas       Persona_has_Vivienda[]
+  id               BigInt                 @id
+  nombre           String                 @db.VarChar(60)
+  telefono         String                 @db.VarChar(10)
+  fecha_nacimiento DateTime               @db.Date
+  vivienda_id      Int
+  genero           genero
+  responsables     Dependientes[]         @relation("Dependientes")
+  dependientes     Dependientes[]         @relation("Responsables")
+  Vivienda         Vivienda               @relation(fields: [vivienda_id], references: [id], map: "Persona_viviendaId_fkey")
+  viviendas        Persona_has_Vivienda[]
 }
 
 model Dependientes {
-  responsableId Int
-  dependienteId Int
+  responsableId BigInt
+  dependienteId BigInt
   dependiente   Persona @relation("Dependientes", fields: [dependienteId], references: [id])
   responsable   Persona @relation("Responsables", fields: [responsableId], references: [id])
 
@@ -60,10 +60,16 @@ model Dependientes {
 }
 
 model Persona_has_Vivienda {
-  personaId  Int
+  personaId  BigInt
   viviendaId Int
   persona    Persona  @relation(fields: [personaId], references: [id])
   vivienda   Vivienda @relation(fields: [viviendaId], references: [id])
 
   @@id([personaId, viviendaId])
+}
+
+enum genero {
+  masculino
+  femenino
+  otro
 }
