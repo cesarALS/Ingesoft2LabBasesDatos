@@ -16,7 +16,7 @@ export async function GET(request, {params}) {
         if (area) filters.area = {lte : parseFloat(area)}; // Menor o igual al área
         if (poblacion) filters.poblacion = { lte: parseInt(poblacion) }; // Menor o igual a población
         if (gobernador) filters.gobernador = { contains: gobernador, mode: 'insensitive' }; // Búsqueda parcial
-        console.log(filters)
+        //console.log(filters)
         const data = await prisma.departamento.findMany({
             where: filters
         });

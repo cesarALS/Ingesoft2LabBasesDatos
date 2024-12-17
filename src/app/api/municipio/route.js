@@ -21,7 +21,7 @@ export async function GET(request, {params}) {
         if (alcalde) filters.gobernador = { contains: alcalde, mode: 'insensitive' }; // Búsqueda parcial
         if (departamento) filters.departamento = { contains: departamento, mode: 'insensitive' }; // Búsqueda parcial
 
-        console.log(filters)
+        //console.log(filters)
 
         const data = await prisma.municipio.findMany({
             where: filters
