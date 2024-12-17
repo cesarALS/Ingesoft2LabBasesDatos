@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import { FaTrash } from "react-icons/fa";
 import { Modal } from "@/components/molecules/6.Modal"
@@ -9,11 +9,53 @@ import ModalContent from "@/components/molecules/2.ModalContent"
 
 // El componente recibe un arreglo de strings con los nombres de las cabeceras y un arreglo de objetos con las entradas de la tabla, falta asignar las funciones a los botones de editar y eliminar, el editar debería abrir el UpdateView con la información de la entrada respectiva y el eliminar debería eliminar la entrada respectiva, tanto en la base de datos como aquí en el front
 
+async function deleteRow(entryId: string, tableName: string): Promise<{status: number, message: string}> {
+
+  try {
+    
+    console.log(`Enviamos el request DELETE al Endpoint, con id ${entryId}, de la tabla ${tableName}`);
+    
+    //Especificamos el ID del registro a borrar en los parámetros de la búsqueda (después de ?)
+    const response = await fetch(`/api/${tableName}?id=${entryId}`,{  
+      method: "DELETE",
+      headers: {
+          "Content-Type": "application/json",
+      },
+    });
+    
+    // Esta sección se ejecuta si la consulta llegó al endpoint, y por lo tanto en el endpoint, o se 
+    // pudo borrar, o no se pudo (jeje) Si no se pudo, se ejecuta el catch
+    
+    const responseData = await response.json();
+
+    if (response.ok) {
+      return {
+        status: response.status,
+        message: `Registro con Identificador ${entryId} Borrado con éxito`
+      }
+    } else {
+      return {
+        status: response.status,
+        message: `No se pudo borrar, porque: ${response.status}: ${responseData.message}`
+      }
+    }
+  } catch(error){
+    // Esta sección se ejecuta si hay un error en la solicitud al endpoint
+    console.error("Error al hacer la solicitud al Endpoint!!! ", error.message);
+    return {
+        status: 500,
+        message: `Error al hacer la solicitud. Vuelve a intentarlo`
+    }
+  }
+
+};
+
 interface ResultsTableProps {
+  tableName: string
   tableData: Table;
 }
 
-export default function ResultsTable({ tableData }: ResultsTableProps) {
+export default function ResultsTable({ tableName, tableData }: ResultsTableProps) {
 
   const { headers, data, erasable } = tableData
   
@@ -28,11 +70,20 @@ export default function ResultsTable({ tableData }: ResultsTableProps) {
   };
   
   const confirmDelete = () => {
-    if (itemToDelete) {
-      // deleteItem(itemToDelete); // Llama a la función para eliminar el item
-      setShowModal(false);
+    const deleteData = async () => {
+      // Funcionalidad para setLoading
+      const res = await deleteRow(Object.entries(itemToDelete)[0][1], tableName);
+      if (res.status === 200 || res.status === 202 || res.status === 204){
+        console.log(`Éxito! ${res.message}`)
+      } else { console.log(res.message)}
+      // Funcionalidad para setLoading(false)
     }
+      
+    deleteData();
+    setShowModal(false);
   };
+
+  useEffect(() => {}, []); // Esta función será importante para rehacer la búsqueda de la tabla
 
   //------------------------------------------------------------------------
 
@@ -43,7 +94,7 @@ export default function ResultsTable({ tableData }: ResultsTableProps) {
 
   const confirmUpdate = () => {
     if (itemToUpdate) {
-      // La función que actualiza el item
+      confirmDelete();
       setShowModal(false);
     }
   }
