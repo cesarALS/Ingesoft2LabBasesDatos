@@ -42,11 +42,21 @@ export async function GET(request, {params}) {
         const columnasModificables = ['Dirección','pisos'];
 
         // Formatear la información de las columnas
+        /*
         const headers = columnasInfo.map((col) => ({
             name: col.column_name,
             type: col.data_type,
             modifiable: columnasModificables.includes(col.column_name),        
-        }));       
+        }));
+        */
+        
+        const headers = columnasInfo.reduce((acc, col) => {
+            acc[col.column_name] = {
+                type: col.data_type,
+                modifiable: columnasModificables.includes(col.column_name),
+            };
+            return acc;
+        }, {});
 
         //console.log(data)
         return NextResponse.json({headers,data,erasable:true})       

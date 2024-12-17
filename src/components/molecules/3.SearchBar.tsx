@@ -1,5 +1,6 @@
 import React from "react";
 import { MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/24/solid"
+import { toUpperCaseFirst } from "@/utils/stringUtils";
 
 interface SearchBarProps {
   headers: Array<{ name: string, type: string, modifiable: boolean, }>;
@@ -26,11 +27,16 @@ export default function SearchBar({ headers, erasable }: SearchBarProps) {
 
       {/* Dropdown List */}
       <select className="mx-2 rounded-lg bg-white px-2 py-1 text-gray-700 outline-none hover:bg-gray-100 ">
-        {headers.map((entry) => (
+        {/*headers.map((entry) => (
           <option key={entry.name} value={entry.name}>
-            {entry.name.charAt(0).toUpperCase() + entry.name.slice(1)}
+            {toUpperCaseFirst(entry.name)}
           </option>
-        ))}
+        ))*/}
+        {Object.entries(headers).map(([key, entry]) => (
+          <option key={key} value={key}>
+            {toUpperCaseFirst(key)}
+          </option>
+        ))}        
       </select>
 
       { erasable ? (          

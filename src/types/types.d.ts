@@ -1,8 +1,11 @@
 export type Header = {
-    name: string;
     type: string;
     modifiable: boolean;
   };
+
+export interface Headers {
+  [name: string]: Header
+}
   
   // Definición para cada registro de una tabla
   export type DataEntry = {
@@ -11,7 +14,7 @@ export type Header = {
   
   // Una tabla
   export interface Table {
-    headers: Header[];
+    headers: Headers;
     data: DataEntry[];
     erasable: boolean;
   }

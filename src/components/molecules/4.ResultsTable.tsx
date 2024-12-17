@@ -80,11 +80,16 @@ export default function ResultsTable({ tableName, tableData, loadingState, reloa
         <table className="min-w-full table-auto border-collapse">
           <thead>
             <tr>
-              {headers.map((header, index) => (
+              {/*headers.map((header, index) => (
                 <th key={index} className="border-b px-4 py-2 bg-gray-300">
                   {toUpperCaseFirst(header.name)}
                 </th>
-              ))}
+              ))*/}
+              {Object.entries(headers).map(([key, header], index) => (
+                <th key={index} className="border-b px-4 py-2 bg-gray-300">
+                  {toUpperCaseFirst(key)}
+                </th>
+              ))}              
               <th className="border-b px-4 py-2 bg-gray-300">Editar</th>
             </tr>
           </thead>

@@ -1,11 +1,7 @@
 import React, { useState } from "react";
+import { toUpperCaseFirst } from "@/utils/stringUtils";
 
 // Este componente crea las tablas dentro de un modal (popUp)
-
-function capitalizeFirstLetter(input: string): string {
-    if (!input) return input;
-    return input.charAt(0).toUpperCase() + input.slice(1);
-}
 
 interface ModalTableProps {
     headers: { name: string; type: string; modifiable: boolean }[];
@@ -51,10 +47,15 @@ export default function ModalTable({ headers, entry, actionType }: ModalTablePro
         <table>
             <thead>
                 <tr>
-                    {headers.map((header, index) => (
+                    {/*headers.map((header, index) => (
                         <th key={index} className="border-b px-4 py-2 bg-gray-300 text-center border-2">
-                            {capitalizeFirstLetter(header.name)}
+                            {toUpperCaseFirst(header.name)}
                         </th>
+                    ))*/}
+                    {Object.entries(headers).map(([key, header], index) => (
+                    <th key={index} className="border-b px-4 py-2 bg-gray-300 text-center border-2">
+                        {toUpperCaseFirst(key)}
+                    </th>
                     ))}
                 </tr>
             </thead>
