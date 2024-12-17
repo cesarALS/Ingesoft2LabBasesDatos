@@ -63,7 +63,8 @@ export default function ResultsTable({ tableName, tableData, loadingState }: Res
   const [itemToDelete, setItemToDelete] = useState<any>(null);
   const [itemToUpdate, setItemToUpdate] = useState<any>(null);
   const [showModal, setShowModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState(false)
+  //Para los modales de mensajes de éxito o fracaso
+  const [modalMessage, setModalMessage] = useState<{on: boolean, message: string}>({on: false, message: ""}) 
 
   const handleDelete = (entry: {}) => {
     // Muestra el modal cuando se presiona el botón de eliminar
@@ -76,16 +77,19 @@ export default function ResultsTable({ tableName, tableData, loadingState }: Res
       
       loadingState({on: true, message: "Borrando"});
       const res = await deleteRow(Object.entries(itemToDelete)[0][1], tableName);
-      
-      if (res.status === 200 || res.status === 202 || res.status === 204){
-        console.log(`Éxito! ${res.message}`)
-      } else { console.log(res.message)}
-      
       loadingState({on: false, message: ""});
+
+      setItemToDelete(null);      
+
+      if (res.status === 200 || res.status === 202 || res.status === 204){        
+        setModalMessage({on: true, message: `Éxito! ${res.message}`})
+      } else { setModalMessage({on: true, message: `Error ${res.message}`})}
+      
     }
       
     await deleteData();
     setShowModal(false);
+    setModalMessage({on: false, message: ""})
   };
 
   useEffect(() => {}, []); // Esta función será importante para rehacer la búsqueda de la tabla
@@ -196,9 +200,14 @@ export default function ResultsTable({ tableName, tableData, loadingState }: Res
           entry = {itemToUpdate}
           confirmAction = {confirmUpdate}
           cancelAction = {cancel}
-          firstButton={{text: "Actualizar", color:"bg-yellow-400", hoverColor: "bg-yellow-600"}}
+          firstButton={{text: "Actualizar", color:"bg-yellow-400", hoverColor: "bg-yellow-600"}}          
           />
         } />
+      )}
+
+      {/* Ventana de Mensaje */}
+      {showModal && modalMessage && (
+        <></>
       )}
     </div>
   );

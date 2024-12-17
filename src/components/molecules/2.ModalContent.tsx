@@ -27,12 +27,12 @@ export default function ModalContent( {
                 >
                 {firstButton.text}
                 </button>
-                <button
-                onClick={cancelAction}
-                className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
-                >
-                Cancelar
-                </button>
+                    <button
+                    onClick={cancelAction}
+                    className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"                        
+                    >                            
+                        Cancelar
+                    </button>                  
             </div>
         </>
     );
