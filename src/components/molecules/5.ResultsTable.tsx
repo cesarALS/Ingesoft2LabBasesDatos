@@ -3,7 +3,8 @@ import { PencilIcon } from "@heroicons/react/24/solid";
 import { FaTrash } from "react-icons/fa";
 import { Modal } from "@/components/molecules/6.Modal"
 import { Table } from "@/components/organisms/0.SearchView"
-import ModalContent from "@/components/molecules/2.ModalContent"
+import ModalContentTabular from "@/components/molecules/2.ModalContentTabular"
+import ModalContentMessage from "../atoms/3.ModalContentMessage";
 
 // Tanto las entradas como las cabeceras de la tabla son dinámicas, falta también asignar las acciones a los botones de editar y eliminar, hay varias maneras de hacerlo, aunque creo que la ideal es por contexto o por la ruta actual, para que todo dependa de la pestaña en la que uno se encuentre actualmente
 
@@ -88,8 +89,6 @@ export default function ResultsTable({ tableName, tableData, loadingState }: Res
     }
       
     await deleteData();
-    setShowModal(false);
-    setModalMessage({on: false, message: ""})
   };
 
   useEffect(() => {}, []); // Esta función será importante para rehacer la búsqueda de la tabla
@@ -112,6 +111,7 @@ export default function ResultsTable({ tableName, tableData, loadingState }: Res
     setItemToDelete(null);
     setItemToUpdate(null);
     setShowModal(false);
+    setModalMessage({on: false, message: ""})
   };
 
   return (
@@ -178,7 +178,7 @@ export default function ResultsTable({ tableName, tableData, loadingState }: Res
       {/* PopUp de Delete */}
       {showModal && itemToDelete && (
         <Modal son={
-          <ModalContent 
+          <ModalContentTabular 
             title={"¿Estás seguro de borrar este registro?"}
             actionType = {"delete"}
             headers={headers}
@@ -193,7 +193,7 @@ export default function ResultsTable({ tableName, tableData, loadingState }: Res
       {/* Ventana de edición!!! */}
       {showModal && itemToUpdate && (
         <Modal son = {
-          <ModalContent 
+          <ModalContentTabular 
           title = {"Modifica el registro"}
           actionType = {"update"}
           headers = {headers}
@@ -206,8 +206,14 @@ export default function ResultsTable({ tableName, tableData, loadingState }: Res
       )}
 
       {/* Ventana de Mensaje */}
-      {showModal && modalMessage && (
-        <></>
+      {showModal && modalMessage.on && (
+        <Modal son ={
+          <ModalContentMessage
+          title = "Resultado" 
+          message = {modalMessage.message} 
+          acceptHandle = {cancel}
+          />
+        }/>
       )}
     </div>
   );

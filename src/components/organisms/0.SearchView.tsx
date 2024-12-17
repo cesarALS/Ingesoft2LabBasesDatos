@@ -73,8 +73,6 @@ export default function SearchView() {
 
   }, [tableName])
 
-
-
   return (
     <>
       <div className="h-[63vh]">
