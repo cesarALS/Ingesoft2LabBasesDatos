@@ -53,15 +53,17 @@ async function deleteRow(entryId: string, tableName: string): Promise<{status: n
 interface ResultsTableProps {
   tableName: string
   tableData: Table;
+  loadingState: Function
 }
 
-export default function ResultsTable({ tableName, tableData }: ResultsTableProps) {
+export default function ResultsTable({ tableName, tableData, loadingState }: ResultsTableProps) {
 
   const { headers, data, erasable } = tableData
   
-  const [showModal, setShowModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<any>(null);
   const [itemToUpdate, setItemToUpdate] = useState<any>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState(false)
 
   const handleDelete = (entry: {}) => {
     // Muestra el modal cuando se presiona el botón de eliminar
@@ -71,12 +73,15 @@ export default function ResultsTable({ tableName, tableData }: ResultsTableProps
   
   const confirmDelete = () => {
     const deleteData = async () => {
-      // Funcionalidad para setLoading
+      
+      loadingState(true);
       const res = await deleteRow(Object.entries(itemToDelete)[0][1], tableName);
+      
       if (res.status === 200 || res.status === 202 || res.status === 204){
         console.log(`Éxito! ${res.message}`)
       } else { console.log(res.message)}
-      // Funcionalidad para setLoading(false)
+      
+      loadingState(false);
     }
       
     deleteData();

@@ -85,7 +85,7 @@ export default function SearchView() {
           </div>
           <div className="p-4">
             {/* Aquí va el contenido de la búsqueda */}
-              <ResultsTable tableData={tableData} tableName={tableName}/>
+              <ResultsTable tableData={tableData} tableName={tableName} loadingState={setLoading}/>
           </div>
         </div>
       </div>
