@@ -33,3 +33,45 @@ export async function getTable(table: string): Promise<Table> {
   }
 
 };
+
+// Esta función borra un registro de una tabla de la BD
+export async function deleteRow(entryId: string, tableName: string): Promise<{status: number, message: string}> {
+
+  try {
+    
+    console.log(`Enviamos el request DELETE al Endpoint, con id ${entryId}, de la tabla ${tableName}`);
+    
+    //Especificamos el ID del registro a borrar en los parámetros de la búsqueda (después de ?)
+    const response = await fetch(`/api/${tableName}?id=${entryId}`,{  
+      method: "DELETE",
+      headers: {
+          "Content-Type": "application/json",
+      },
+    });
+    
+    // Esta sección se ejecuta si la consulta llegó al endpoint, y por lo tanto en el endpoint, o se 
+    // pudo borrar, o no se pudo (jeje) Si no se pudo, se ejecuta el catch
+    
+    const responseData = await response.json();
+
+    if (response.ok) {
+      return {
+        status: response.status,
+        message: `Registro con Identificador ${entryId} Borrado con éxito`
+      }
+    } else {
+      return {
+        status: response.status,
+        message: `No se pudo borrar, porque: ${response.status}: ${responseData.message}`
+      }
+    }
+  } catch(error){
+    // Esta sección se ejecuta si hay un error en la solicitud al endpoint
+    console.error("Error al hacer la solicitud al Endpoint!!! ", error.message);
+    return {
+        status: 500,
+        message: `Error al hacer la solicitud. Vuelve a intentarlo`
+    }
+  }
+
+};

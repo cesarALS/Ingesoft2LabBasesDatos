@@ -1,6 +1,5 @@
-"use client"
-
 import React from "react";
+import { toUpperCaseFirst } from "@/utils/stringUtils";
 
 interface SelectorButtonProps {
   buttonText: string;
@@ -19,7 +18,7 @@ export default function SelectorButton({ buttonText, onClick, activeTable }: Sel
       onClick={onClick}
       title={`Ver vista de ${buttonText}`}
     >
-      {buttonText}
+      {toUpperCaseFirst(buttonText)}
     </button>
   );
 }

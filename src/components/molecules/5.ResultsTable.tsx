@@ -4,48 +4,11 @@ import { FaTrash } from "react-icons/fa";
 import { Modal } from "@/components/molecules/6.Modal"
 import ModalContentTabular from "@/components/molecules/2.ModalContentTabular"
 import ModalContentMessage from "../atoms/3.ModalContentMessage";
+import { deleteRow  } from "@/services/requestFunctions";
 import { Table } from "@/types/types"
 
-async function deleteRow(entryId: string, tableName: string): Promise<{status: number, message: string}> {
+import { toUpperCaseFirst } from "@/utils/stringUtils";
 
-  try {
-    
-    console.log(`Enviamos el request DELETE al Endpoint, con id ${entryId}, de la tabla ${tableName}`);
-    
-    //Especificamos el ID del registro a borrar en los parámetros de la búsqueda (después de ?)
-    const response = await fetch(`/api/${tableName}?id=${entryId}`,{  
-      method: "DELETE",
-      headers: {
-          "Content-Type": "application/json",
-      },
-    });
-    
-    // Esta sección se ejecuta si la consulta llegó al endpoint, y por lo tanto en el endpoint, o se 
-    // pudo borrar, o no se pudo (jeje) Si no se pudo, se ejecuta el catch
-    
-    const responseData = await response.json();
-
-    if (response.ok) {
-      return {
-        status: response.status,
-        message: `Registro con Identificador ${entryId} Borrado con éxito`
-      }
-    } else {
-      return {
-        status: response.status,
-        message: `No se pudo borrar, porque: ${response.status}: ${responseData.message}`
-      }
-    }
-  } catch(error){
-    // Esta sección se ejecuta si hay un error en la solicitud al endpoint
-    console.error("Error al hacer la solicitud al Endpoint!!! ", error.message);
-    return {
-        status: 500,
-        message: `Error al hacer la solicitud. Vuelve a intentarlo`
-    }
-  }
-
-};
 
 interface ResultsTableProps {
   tableName: string
@@ -118,7 +81,7 @@ export default function ResultsTable({ tableName, tableData, loadingState }: Res
             <tr>
               {headers.map((header, index) => (
                 <th key={index} className="border-b px-4 py-2 bg-gray-300">
-                  {header.name.charAt(0).toUpperCase() + header.name.slice(1)}
+                  {toUpperCaseFirst(header.name)}
                 </th>
               ))}
               <th className="border-b px-4 py-2 bg-gray-300">Editar</th>
