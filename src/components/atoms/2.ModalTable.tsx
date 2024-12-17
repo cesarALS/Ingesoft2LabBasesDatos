@@ -45,6 +45,8 @@ export default function ModalTable({ headers, entry, actionType }: ModalTablePro
         }));
     };
 
+    console.log(dataTypes);
+
     return (
         <table>
             <thead>
@@ -58,19 +60,27 @@ export default function ModalTable({ headers, entry, actionType }: ModalTablePro
             </thead>
             <tbody>
                 <tr key="unique-entry" className="border-b">
-                    {Object.keys(entry).map((key, index) => (
+                    {Object.keys(entry).map((key, index) => (                        
                         <td key={key} className="text-center py-2 px-2">
                             {modifiableIndices.includes(index) ? (
                                 <input
-                                    type={dataTypes[index]}
-                                    placeholder={String(entry[key])} // Muestra el valor actual como sugerencia
-                                    value={formData[key] || ""} // Inicializa vacío hasta que el usuario escriba
+                                    type={dataTypes[index]} // "date", "text", o "number"
+                                    placeholder={
+                                        headers[index].type === "date"
+                                            ? new Date(entry[key]).toISOString().split("T")[0] // Convierte la fecha a YYYY-MM-DD
+                                            : String(entry[key]) // Muestra el valor actual para otros tipos
+                                    }
+                                    value={
+                                        headers[index].type === "date"
+                                            ? formData[key] || new Date(entry[key]).toISOString().split("T")[0] // Formatea fechas correctamente
+                                            : formData[key] || "" // Otros valores inicializan vacíos
+                                    }
                                     onChange={(e) => handleInputChange(key, e.target.value)}
                                     className="px-2 py-1 rounded-md hover:bg-gray-200 selected:bg-gray-200"
                                 />
                             ) : (
                                 entry[key] instanceof Date
-                                    ? (entry[key] as Date).toLocaleDateString() // Formatear fechas
+                                    ? new Date(entry[key]).toLocaleDateString() // Formatear fechas para visualización no editable
                                     : String(entry[key]) // Convertir otros valores a cadena
                             )}
                         </td>
@@ -78,5 +88,14 @@ export default function ModalTable({ headers, entry, actionType }: ModalTablePro
                 </tr>
             </tbody>
         </table>
+    );
+}
+
+// Este componente servirá para crear el freaking input, manejando casos donde sea fecha, 
+// donde sea string, y donde sea número
+function InputForm(){
+    return (
+        <>
+        </>
     );
 }
