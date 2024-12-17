@@ -1,9 +1,9 @@
 "use client"
 
 import React, { useEffect, useState } from "react";
-import SelectorBar from "../molecules/3.SelectorBar";
-import SearchBar from "../molecules/4.SearchBar";
-import ResultsTable from "../molecules/5.ResultsTable";
+import SelectorBar from "../molecules/2.SelectorBar";
+import SearchBar from "../molecules/3.SearchBar";
+import ResultsTable from "../molecules/4.ResultsTable";
 import LoadingWheel from "../atoms/1.LoadingWheel";
 import { getTable } from "@/services/requestFunctions";
 import { Table } from "@/types/types"

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import { FaTrash } from "react-icons/fa";
-import { Modal } from "@/components/molecules/6.Modal"
-import ModalContentTabular from "@/components/molecules/2.ModalContentTabular"
+import { Modal } from "@/components/organisms/1.Modal"
+import ModalContentTabular from "@/components/molecules/5.ModalContentTabular"
 import ModalContentMessage from "../atoms/3.ModalContentMessage";
 import { deleteRow  } from "@/services/requestFunctions";
 import { Table } from "@/types/types"
