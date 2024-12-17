@@ -39,17 +39,9 @@ export async function GET(request, {params}) {
         ;
         
         // Determinar cuáles columnas son modificables
-        const columnasModificables = ['Dirección','pisos'];
+        const columnasModificables = ['direccion','pisos'];
 
-        // Formatear la información de las columnas
-        /*
-        const headers = columnasInfo.map((col) => ({
-            name: col.column_name,
-            type: col.data_type,
-            modifiable: columnasModificables.includes(col.column_name),        
-        }));
-        */
-        
+        // Formatear la información de las columnas        
         const headers = columnasInfo.reduce((acc, col) => {
             acc[col.column_name] = {
                 type: col.data_type,

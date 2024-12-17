@@ -34,6 +34,7 @@ export default function SearchView() {
     }
     
     fetchData();
+    console.log(tableData)
 
   }, [tableName, tableReload] )
 

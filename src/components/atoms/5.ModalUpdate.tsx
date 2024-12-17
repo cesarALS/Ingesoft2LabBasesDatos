@@ -1,3 +1,4 @@
+import { useFormik } from "formik"
 import { TableHeaders, DataEntry } from "@/types/types";
 
 interface ModalUpdateProps {
@@ -10,6 +11,20 @@ interface ModalUpdateProps {
 export default function ModalUpdate(
     { headers, entry, confirmAction, cancelAction } : ModalUpdateProps
 ){
+    
+    // Si da el tiempo, se pueden añadir tipos de Date
+    var initialValues: {[key: string]: String|Number} = {};
+    
+    Object.keys(entry).forEach(attribute => {
+        console.log(attribute)
+        if (headers[attribute].modifiable) {
+            console.log(`${attribute}: Modifiable`)
+            initialValues[String(attribute)] = ""
+        }
+    })
+
+    console.log(initialValues)
+    
     return (
         <>
             <h2 className="text-xl font-bold mb-4 text-center">

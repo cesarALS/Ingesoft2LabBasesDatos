@@ -92,7 +92,9 @@ export default function ResultsTable({ tableName, tableData, loadingState, reloa
             <tr key={index} className="border-b hover:bg-gray-200">
               {Object.keys(entry).map((key) => (
                 <td key={key} className="text-center px-4 py-2">
-                  {entry[key]}
+                  {(headers[key].type === "date") ? (new Date(entry[key]).toLocaleDateString())
+                  : (entry[key])
+                  }
                 </td>
               ))}
               <td className="flex justify-center px-4 py-2">
