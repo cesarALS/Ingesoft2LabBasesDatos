@@ -16,7 +16,7 @@ export default function Footer() {
             </ul>
           </div>
           <div className = "grid text-center w-[40%] gap-1.5">
-            <p className="text-[0.9em]">Creado utilizando Nextjs, Vercel y SQLite</p>
+            <p className="text-[0.9em]">Creado utilizando Nextjs, Vercel y PostgreSQL</p>
             <div className="flex gap-7 justify-center items-center  ">
               <Image className="w-[17%] pt-2"
                 src="/next.svg"
@@ -31,7 +31,7 @@ export default function Footer() {
                 height={80}
               />
               <Image className="w-[14.3%] pt-2"
-                src="/sqlite.png"
+                src="/postgres.png"
                 alt="SQLite"
                 width={70}
                 height={10}

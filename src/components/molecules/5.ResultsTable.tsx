@@ -12,11 +12,12 @@ import { toUpperCaseFirst } from "@/utils/stringUtils";
 
 interface ResultsTableProps {
   tableName: string
-  tableData: Table;
+  tableData: Table
   loadingState: Function
+  reloadTable: Function
 }
 
-export default function ResultsTable({ tableName, tableData, loadingState }: ResultsTableProps) {
+export default function ResultsTable({ tableName, tableData, loadingState, reloadTable }: ResultsTableProps) {
 
   const { headers, data, erasable } = tableData
   
@@ -170,7 +171,7 @@ export default function ResultsTable({ tableName, tableData, loadingState }: Res
           <ModalContentMessage
           title = "Resultado" 
           message = {modalMessage.message} 
-          acceptHandle = {cancel}
+          acceptHandle = {() => {cancel(); reloadTable((prev) => prev + 1);}}
           />
         }/>
       )}

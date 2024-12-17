@@ -19,6 +19,7 @@ export default function SearchView() {
   };
   
   const [tableName, setTableName] = useState<string>(tableNames[0]);
+  const [tableReload, reloadTable] = useState<number>(0);
   const [tableData, setTableData] = useState<Table>(defaultTable);
   const [isLoading, setLoading] = useState<{on: boolean, message: string}>({on: false, message: ""})
 
@@ -34,7 +35,7 @@ export default function SearchView() {
     
     fetchData();
 
-  }, [tableName])
+  }, [tableName, tableReload] )
 
   return (
     <>
@@ -45,7 +46,11 @@ export default function SearchView() {
             <SearchBar headers={tableData.headers} erasable={tableData.erasable} />
           </div>
           <div className="p-4">
-            <ResultsTable tableData={tableData} tableName={tableName} loadingState={setLoading}/>
+            <ResultsTable 
+            tableData={tableData} 
+            tableName={tableName} 
+            loadingState={setLoading}
+            reloadTable={reloadTable}/>
           </div>
         </div>
       </div>

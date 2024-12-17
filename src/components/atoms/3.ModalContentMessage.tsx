@@ -1,7 +1,7 @@
 interface ModalContentMessageProps {
     title: string,
     message: string,
-    acceptHandle: Function    
+    acceptHandle: Function 
 }
 
 export default function ModalContentMessage ( {title, message, acceptHandle } : ModalContentMessageProps){
