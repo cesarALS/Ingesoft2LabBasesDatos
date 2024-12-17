@@ -57,16 +57,16 @@ export default function SearchView() {
   
   const [tableName, setTableName] = useState<string>(tableNames[0]);
   const [tableData, setTableData] = useState<Table>(defaultTable);
-  const [isLoading, setLoading] = useState(false)
+  const [isLoading, setLoading] = useState<{on: boolean, message: string}>({on: false, message: ""})
 
   // Hacer la búsqueda a la BD ahora que se cambió de pestaña
   useEffect(() => {
 
     const fetchData = async () => {
-      setLoading(true);    
+      setLoading({on: true, message: "Cargando"});    
       const t = await getTable(tableName);
       setTableData(t);
-      setLoading(false);      
+      setLoading({on: false, message: ""});      
     }
     
     fetchData();
@@ -89,7 +89,7 @@ export default function SearchView() {
           </div>
         </div>
       </div>
-      {isLoading && <LoadingWheel />}
+      {isLoading.on && <LoadingWheel waitMessage={isLoading.message}/>}
     </>
   );
 }

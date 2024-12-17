@@ -74,14 +74,14 @@ export default function ResultsTable({ tableName, tableData, loadingState }: Res
   const confirmDelete = () => {
     const deleteData = async () => {
       
-      loadingState(true);
+      loadingState({on: true, message: "Borrando"});
       const res = await deleteRow(Object.entries(itemToDelete)[0][1], tableName);
       
       if (res.status === 200 || res.status === 202 || res.status === 204){
         console.log(`Éxito! ${res.message}`)
       } else { console.log(res.message)}
       
-      loadingState(false);
+      loadingState({on: false, message: ""});
     }
       
     deleteData();
