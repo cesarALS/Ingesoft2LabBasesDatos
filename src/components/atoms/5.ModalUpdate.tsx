@@ -1,5 +1,7 @@
 import { useFormik } from "formik"
 import { TableHeaders, DataEntry } from "@/types/types";
+import { toUpperCaseFirst } from "@/utils/stringUtils";
+import { getFormType } from "@/utils/BDUtils"
 
 interface ModalUpdateProps {
     headers: TableHeaders
@@ -13,24 +15,55 @@ export default function ModalUpdate(
 ){
     
     // Si da el tiempo, se pueden añadir tipos de Date
-    var initialValues: {[key: string]: String|Number} = {};
+    var initVals: {[key: string]: String|Number} = {};
     
-    Object.keys(entry).forEach(attribute => {
-        console.log(attribute)
-        if (headers[attribute].modifiable) {
-            console.log(`${attribute}: Modifiable`)
-            initialValues[String(attribute)] = ""
+    Object.keys(entry).forEach(attr => {
+        console.log(attr)
+        if (headers[attr].modifiable) {
+            console.log(`${attr}: Modifiable`)
+            initVals[String(attr)] = ""
         }
     })
 
-    console.log(initialValues)
+    console.log(initVals)
+
+    const formik = useFormik({initialValues: initVals})
+    console.log(formik)
     
     return (
         <>
             <h2 className="text-xl font-bold mb-4 text-center">
                 Actualiza el Registro
             </h2> 
-            {/* Aquí va la fucking tabla */} 
+            <form>
+            <div className="grid rounded-md">
+                {Object.keys(headers).map((attr) => (
+                <div
+                    key={attr}
+                    className="grid grid-cols-2 items-center hover:bg-gray-100"
+                >
+                    <div className="flex border-2 h-[100%] items-center justify-center p-2">
+                        <p className="font-bold text-center">{toUpperCaseFirst(attr)}</p>
+                    </div>
+                    <div className="flex border-2 h-[100%] items-center justify-center p-2">
+                        {headers[attr].modifiable ? (
+                            <input
+                            className="text-center rounded-md border-[0.1em]"
+                            type={getFormType(headers[attr].type)}
+                            id={attr}
+                            placeholder={entry[attr]}
+                            value={formik.values.attr}
+                            onChange={formik.handleChange}
+                            />                            
+                        ) : (
+                            <p className="text-center"> {entry[attr]} </p>    
+                        )}
+                        
+                    </div>
+                </div>
+                ))}
+            </div>
+            </form>   
             <div className="flex justify-center gap-6">
                 <button
                 onClick={confirmAction}

@@ -61,7 +61,7 @@ export default function ResultsTable({ tableName, tableData, loadingState, reloa
 
   const confirmUpdate = () => {
     if (itemToUpdate) {
-      confirmDelete();
+      //confirmDelete();
       setShowModal(false);
     }
   }
