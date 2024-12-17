@@ -2,13 +2,9 @@ import { useState, useEffect } from "react";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import { FaTrash } from "react-icons/fa";
 import { Modal } from "@/components/molecules/6.Modal"
-import { Table } from "@/components/organisms/0.SearchView"
 import ModalContentTabular from "@/components/molecules/2.ModalContentTabular"
 import ModalContentMessage from "../atoms/3.ModalContentMessage";
-
-// Tanto las entradas como las cabeceras de la tabla son dinámicas, falta también asignar las acciones a los botones de editar y eliminar, hay varias maneras de hacerlo, aunque creo que la ideal es por contexto o por la ruta actual, para que todo dependa de la pestaña en la que uno se encuentre actualmente
-
-// El componente recibe un arreglo de strings con los nombres de las cabeceras y un arreglo de objetos con las entradas de la tabla, falta asignar las funciones a los botones de editar y eliminar, el editar debería abrir el UpdateView con la información de la entrada respectiva y el eliminar debería eliminar la entrada respectiva, tanto en la base de datos como aquí en el front
+import { Table } from "@/types/types"
 
 async function deleteRow(entryId: string, tableName: string): Promise<{status: number, message: string}> {
 
