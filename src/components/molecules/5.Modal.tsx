@@ -1,9 +1,9 @@
 // Los anuncios que se despliegan en la mitad de la pantalla y que oscurecen el fondo de la misma
 
-import { Component } from "react";
+import { ReactNode } from "react";
 
 interface modalSon {
-    son: Component;
+    son: ReactNode;
 }
 
 export function Modal( { son }: modalSon ){

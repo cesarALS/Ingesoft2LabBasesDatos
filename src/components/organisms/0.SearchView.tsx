@@ -13,7 +13,7 @@ const tableNames = ["departamento", "municipio", "vivienda", "persona",];
 // El SearchView es la suma de la barra de búsqueda
 export default function SearchView() {
   const defaultTable: Table = {
-    headers: [],
+    headers: {},
     data: [],
     erasable: true,
   };

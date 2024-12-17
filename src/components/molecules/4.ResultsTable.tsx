@@ -1,14 +1,13 @@
 import { useState, useEffect } from "react";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import { FaTrash } from "react-icons/fa";
-import { Modal } from "@/components/organisms/1.Modal"
-import ModalContentTabular from "@/components/molecules/5.ModalContentTabular"
+import { Modal } from "@/components/molecules/5.Modal"
 import ModalContentMessage from "../atoms/3.ModalContentMessage";
 import { deleteRow  } from "@/services/requestFunctions";
 import { Table } from "@/types/types"
-
 import { toUpperCaseFirst } from "@/utils/stringUtils";
-
+import ModalDelete from "../atoms/4.ModalDelete";
+import ModalUpdate from "../atoms/5.ModalUpdate";
 
 interface ResultsTableProps {
   tableName: string
@@ -80,11 +79,6 @@ export default function ResultsTable({ tableName, tableData, loadingState, reloa
         <table className="min-w-full table-auto border-collapse">
           <thead>
             <tr>
-              {/*headers.map((header, index) => (
-                <th key={index} className="border-b px-4 py-2 bg-gray-300">
-                  {toUpperCaseFirst(header.name)}
-                </th>
-              ))*/}
               {Object.entries(headers).map(([key, header], index) => (
                 <th key={index} className="border-b px-4 py-2 bg-gray-300">
                   {toUpperCaseFirst(key)}
@@ -142,32 +136,28 @@ export default function ResultsTable({ tableName, tableData, loadingState, reloa
       
       {/* PopUp de Delete */}
       {showModal && itemToDelete && (
-        <Modal son={
-          <ModalContentTabular 
-            title={"¿Estás seguro de borrar este registro?"}
-            actionType = {"delete"}
-            headers={headers}
-            entry={itemToDelete}
-            confirmAction={confirmDelete}
-            cancelAction={cancel}
-            firstButton={{text: "Borrar", color:"bg-red-500", hoverColor: "bg-red-600"}}
-          />
-        } />
+        <Modal son = {
+            <ModalDelete
+              headers={headers}
+              entry={itemToDelete}
+              confirmAction={confirmDelete}
+              cancelAction={cancel}
+            />          
+        }
+        />
       )}
 
       {/* Ventana de edición!!! */}
       {showModal && itemToUpdate && (
         <Modal son = {
-          <ModalContentTabular 
-          title = {"Modifica el registro"}
-          actionType = {"update"}
-          headers = {headers}
-          entry = {itemToUpdate}
-          confirmAction = {confirmUpdate}
-          cancelAction = {cancel}
-          firstButton={{text: "Actualizar", color:"bg-yellow-400", hoverColor: "bg-yellow-600"}}          
+          <ModalUpdate
+            headers={headers}
+            entry={itemToUpdate}
+            confirmAction={confirmUpdate}
+            cancelAction={cancel}
           />
-        } />
+        } 
+        />
       )}
 
       {/* Ventana de Mensaje */}

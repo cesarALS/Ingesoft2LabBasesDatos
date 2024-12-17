@@ -1,9 +1,10 @@
 import React from "react";
 import { MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/24/solid"
 import { toUpperCaseFirst } from "@/utils/stringUtils";
+import { TableHeader } from "@/types/types"
 
 interface SearchBarProps {
-  headers: Array<{ name: string, type: string, modifiable: boolean, }>;
+  headers: TableHeader;
   erasable: boolean
 }
 
