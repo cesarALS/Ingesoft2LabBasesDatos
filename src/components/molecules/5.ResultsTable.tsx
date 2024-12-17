@@ -71,7 +71,7 @@ export default function ResultsTable({ tableName, tableData, loadingState }: Res
     setShowModal(true);
   };
   
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     const deleteData = async () => {
       
       loadingState({on: true, message: "Borrando"});
@@ -84,7 +84,7 @@ export default function ResultsTable({ tableName, tableData, loadingState }: Res
       loadingState({on: false, message: ""});
     }
       
-    deleteData();
+    await deleteData();
     setShowModal(false);
   };
 
