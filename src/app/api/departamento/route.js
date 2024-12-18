@@ -13,7 +13,7 @@ export async function GET(request, {params}) {
 
         const filters = {};
         if (nombre) filters.nombre = { contains: nombre, mode: 'insensitive' }; // Búsqueda parcial
-        if (area) filters.area = {lte : parseFloat(area)}; // Menor o igual al área
+        if (area) filters.area = {lte : parseInt(area)}; // Menor o igual al área
         if (poblacion) filters.poblacion = { lte: parseInt(poblacion) }; // Menor o igual a población
         if (gobernador) filters.gobernador = { contains: gobernador, mode: 'insensitive' }; // Búsqueda parcial
         //console.log(filters)
@@ -40,8 +40,7 @@ export async function GET(request, {params}) {
                 minLength: 0,
                 maxLength: 100,
                 min: 0,
-                max: 999999999,
-                step: 1,
+                max: 999999999999,
                 pattern: ".*",
             };
         
@@ -54,11 +53,9 @@ export async function GET(request, {params}) {
         
             // Dependiendo del tipo de dato y la columna, establecer las restricciones
             switch (column_name) {
-                case 'poblacion':
-                    constraints.step = 1000; 
-                    break;
                 case 'gobernador':
                     constraints.maxLength = columnInfo.character_maximum_length;
+                    constraints.minLength = 10;
                     break;
             }
         

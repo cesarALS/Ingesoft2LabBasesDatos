@@ -40,11 +40,44 @@ export async function GET(request, {params}) {
         // Determinar cuáles columnas son modificables
         const columnasModificables = ['telefono','genero','vivienda_id'];
 
+        function defPossibleValues(column_name, colsInfo) {
+            let constraints = {
+                minLength: 0,
+                maxLength: 100,
+                min: 0,
+                max: 999999999999,
+                pattern: ".*",
+            };
+        
+            // Obtener información de la columna correspondiente
+            const columnInfo = colsInfo.find(col => col.column_name === column_name);
+        
+            if (!columnInfo || !columnasModificables.includes(column_name)) {
+                return null; // Si no es modificable, no definimos constraints
+            }
+        
+            // Dependiendo del tipo de dato y la columna, establecer las restricciones
+            switch (column_name) {
+                case 'telefono':
+                    constraints.minLength = columnInfo.character_maximum_length
+                    constraints.maxLength = columnInfo.character_maximum_length;
+                    constraints.pattern = /^3\d{9}$/
+                    break;
+                case 'pisos':
+                    constraints.max = 10
+            }
+        }                
+
         // Formatear la información de las columnas
         const headers = columnasInfo.reduce((acc, col) => {
+            
+            const constraints = defPossibleValues(col.column_name, columnasInfo);
+
             acc[col.column_name] = {
                 type: col.data_type,
                 modifiable: columnasModificables.includes(col.column_name),
+                constraints: constraints,
+                possibleValues: null      
             };
             return acc;
         }, {});

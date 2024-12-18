@@ -3,7 +3,6 @@ export type AttributeConstraints = {
   maxLength: number
   min: number
   max: number
-  step: number
   pattern: string
 }
 

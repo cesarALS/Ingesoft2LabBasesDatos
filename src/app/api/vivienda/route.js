@@ -42,11 +42,44 @@ export async function GET(request, {params}) {
         // Determinar cuáles columnas son modificables
         const columnasModificables = ['direccion','pisos'];
 
+        function defPossibleValues(column_name, colsInfo) {
+            let constraints = {
+                minLength: 0,
+                maxLength: 100,
+                min: 0,
+                max: 999999999999,
+                pattern: ".*",
+            };
+        
+            // Obtener información de la columna correspondiente
+            const columnInfo = colsInfo.find(col => col.column_name === column_name);
+        
+            if (!columnInfo || !columnasModificables.includes(column_name)) {
+                return null; // Si no es modificable, no definimos constraints
+            }
+        
+            // Dependiendo del tipo de dato y la columna, establecer las restricciones
+            switch (column_name) {
+                case 'direccion':
+                    constraints.maxLength = columnInfo.character_maximum_length;
+                    break;
+                case 'pisos':
+                    constraints.max = 10
+            }
+        
+            return constraints;
+        }             
+
         // Formatear la información de las columnas        
         const headers = columnasInfo.reduce((acc, col) => {
+            
+            const constraints = defPossibleValues(col.column_name, columnasInfo);
+
             acc[col.column_name] = {
                 type: col.data_type,
                 modifiable: columnasModificables.includes(col.column_name),
+                constraints: constraints,
+                possibleValues: null      
             };
             return acc;
         }, {});

@@ -66,7 +66,6 @@ export default function ModalUpdate(
                             maxLength={headers[attr].constraints?.maxLength}
                             min={headers[attr].constraints?.min}
                             max={headers[attr].constraints?.max}
-                            step={headers[attr].constraints?.step}
                             pattern={headers[attr].constraints?.pattern}
                             value={formik.values[attr]}
                             onChange={formik.handleChange}

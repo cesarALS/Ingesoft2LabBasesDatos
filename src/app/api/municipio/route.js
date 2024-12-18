@@ -16,7 +16,7 @@ export async function GET(request, {params}) {
         const filters = {};
         if (id) filters.id = id
         if (nombre) filters.nombre = { contains: nombre, mode: 'insensitive' }; // Búsqueda parcial
-        if (area) filters.area = {lte : parseFloat(area)}; // Menor o igual al área
+        if (area) filters.area = {lte : parseInt(area)}; // Menor o igual al área
         if (poblacion) filters.poblacion = { lte: parseInt(poblacion) }; // Menor o igual a población
         if (alcalde) filters.gobernador = { contains: alcalde, mode: 'insensitive' }; // Búsqueda parcial
         if (departamento) filters.departamento = { contains: departamento, mode: 'insensitive' }; // Búsqueda parcial
@@ -40,11 +40,43 @@ export async function GET(request, {params}) {
         // Determinar cuáles columnas son modificables
         const columnasModificables = ['poblacion','alcalde'];
 
+        function defPossibleValues(column_name, colsInfo) {
+            let constraints = {
+                minLength: 0,
+                maxLength: 100,
+                min: 0,
+                max: 999999999999,
+                pattern: ".*",
+            };
+        
+            // Obtener información de la columna correspondiente
+            const columnInfo = colsInfo.find(col => col.column_name === column_name);
+        
+            if (!columnInfo || !columnasModificables.includes(column_name)) {
+                return null; // Si no es modificable, no definimos constraints
+            }
+        
+            // Dependiendo del tipo de dato y la columna, establecer las restricciones
+            switch (column_name) {
+                case 'alcalde':
+                    constraints.maxLength = columnInfo.character_maximum_length;
+                    constraints.minLength = 10;
+                    break;
+            }
+        
+            return constraints;
+        }        
+
         // Formatear la información de las columnas        
         const headers = columnasInfo.reduce((acc, col) => {
+
+            const constraints = defPossibleValues(col.column_name, columnasInfo);
+
             acc[col.column_name] = {
                 type: col.data_type,
                 modifiable: columnasModificables.includes(col.column_name),
+                constraints: constraints,
+                possibleValues: null                
             };
             return acc;
         }, {});    
