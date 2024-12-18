@@ -8,10 +8,11 @@ export type AttributeConstraints = {
 
 export type TableHeader = {
     type: string    
-    modifiable: boolean
+    modifiable: boolean // Si se puede actualizar el atributo en el registro
     constraints: AttributeConstraints | null
-    possibleValues: string[] | number[] | null
+    possibleValues: string[] | number[] | null //Si el valor está limitado a un rango, ese rango
     isPrimaryKey: boolean // Si la llave primaria está compuesta de más, no importa: se muestra como id
+    choosableInCreate: boolean //Si se puede elegir en crear (la única excepción parecen ser las llaves primarias autoincrementales)
 };
 
 export interface TableHeaders {
@@ -20,7 +21,7 @@ export interface TableHeaders {
   
 // Definición para cada registro de una tabla
 export type DataEntry = {
-  [key: string | number]: string | number | Date;
+  [key: string | number]: string | number;
 };
   
 // Una tabla

@@ -133,7 +133,24 @@ export async function PUT (request, {params}){
         {status: 500}
       );
     }
-} 
+}
+
+export async function POST(request, { params }){
+    try {
+        // Parsear el cuerpo de la solicitud
+        const { vivienda_id, direccion, propietario } = await request.json();
+    
+        // Validación: asegurarse de que los datos necesarios estén presentes
+        if (!vivienda_id || !direccion || !propietario) {
+          return new Response(
+            JSON.stringify({ error: 'Todos los campos son obligatorios' }),
+            { status: 400 }
+          );
+        }
+    } catch (e){
+        
+    }
+}
 
 export async function DELETE(request, { params }) {
     try {
