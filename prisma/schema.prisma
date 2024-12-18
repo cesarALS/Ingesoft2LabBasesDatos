@@ -40,7 +40,7 @@ model Municipio {
 model Persona {
   id               BigInt                 @id
   nombre           String                 @db.VarChar(60)
-  telefono         String                 @db.VarChar(10)
+  telefono         BigInt
   fecha_nacimiento DateTime               @db.Date
   vivienda_id      Int
   genero           genero
