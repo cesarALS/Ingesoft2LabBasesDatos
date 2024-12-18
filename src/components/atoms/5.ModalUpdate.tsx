@@ -62,6 +62,12 @@ export default function ModalUpdate(
                             type={getFormType(headers[attr].type)}
                             id={attr}
                             placeholder={entry[attr]}
+                            minLength={headers[attr].constraints?.minLength}
+                            maxLength={headers[attr].constraints?.maxLength}
+                            min={headers[attr].constraints?.min}
+                            max={headers[attr].constraints?.max}
+                            step={headers[attr].constraints?.step}
+                            pattern={headers[attr].constraints?.pattern}
                             value={formik.values[attr]}
                             onChange={formik.handleChange}
                             />                            

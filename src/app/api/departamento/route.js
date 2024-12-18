@@ -38,11 +38,11 @@ export async function GET(request, {params}) {
         function defPossibleValues(column_name, colsInfo) {
             let constraints = {
                 minLength: 0,
-                maxLength: 0,
+                maxLength: 100,
                 min: 0,
-                max: 0,
-                step: 0,
-                pattern: "",
+                max: 999999999,
+                step: 1,
+                pattern: ".*",
             };
         
             // Obtener información de la columna correspondiente
@@ -69,8 +69,6 @@ export async function GET(request, {params}) {
         // Formatear la información de las columnas
         const headers = columnasInfo.reduce((acc, col) => {
             const constraints = defPossibleValues(col.column_name, columnasInfo);
-
-            console.log(constraints)
             
             acc[col.column_name] = {
                 type: col.data_type,
@@ -81,8 +79,6 @@ export async function GET(request, {params}) {
             return acc;
         }, {});
 
-        console.log(headers);
-        // console.log(data)
         return NextResponse.json({headers,data, erasable: false})       
 
     } catch (error) {
