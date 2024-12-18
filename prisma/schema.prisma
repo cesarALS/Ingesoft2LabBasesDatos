@@ -20,7 +20,7 @@ model Vivienda {
 
 model Departamento {
   nombre     String      @id @db.VarChar(30)
-  area       Float
+  area       Int
   poblacion  Int
   gobernador String      @db.VarChar(60)
   municipios Municipio[]
@@ -29,7 +29,7 @@ model Departamento {
 model Municipio {
   id                 Int          @id @default(autoincrement())
   nombre             String       @db.VarChar(30)
-  area               Float
+  area               Int
   poblacion          Int
   alcalde            String       @db.VarChar(60)
   departamentoNombre String
