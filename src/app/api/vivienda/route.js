@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import {prisma} from '@/libs/prisma'
+import { Prisma } from '@prisma/client'
 import JSONBig from 'json-bigint';
 
 export async function GET(request, {params}) {
@@ -59,18 +60,35 @@ export async function GET(request, {params}) {
     }    
   }
 
-export async function DELETE(request, {params}){
-    try{
-        const {searchParams} = new URL(request.url);
-        const id = searchParams.get('id')
-        const vivendaEliminada = await prisma.vivienda.delete({
+  export async function DELETE(request, { params }) {
+    try {
+        const { searchParams } = new URL(request.url);
+        const id = searchParams.get('id');
+
+        const viviendaEliminada = await prisma.vivienda.delete({
             where: {
-                id : Number(id)
+                id: Number(id),
+            },
+        });
+
+        return NextResponse.json({ message: "Vivienda removida" });
+    } catch (e) {
+
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+            // console.log(e)
+            return NextResponse.json({
+                error: 'La vivienda está siendo referenciada por otra entidad',
+            }, { status: 400 }); // Respuesta 400: error del cliente            
+            /*
+            if (e.code === 'P2003') {
+
             }
-        })
-    return NextResponse.json("Vivienda removida")
-    }catch(error) {
-        console.error('Error en el endpoint:', error);
-        return NextResponse.json({ error: 'Ocurrió un error al procesar la solicitud' });
-    }    
+            */
+        }
+
+        // Manejo de errores genéricos
+        return NextResponse.json({
+            error: 'Ocurrió un error inesperado al procesar la solicitud.',
+        }, { status: 500 }); // Respuesta 500: error del servidor
+    }
 }

@@ -64,18 +64,36 @@ export async function GET(request, {params}) {
   }
   
   
-export async function DELETE(request, {params}){
-    try{
+  export async function DELETE(request, {params}) {
+    try {
         const {searchParams} = new URL(request.url);
-        const id = searchParams.get('id')
-        const vivendaEliminada = await prisma.persona.delete({
+        const id = searchParams.get('id');
+
+        // Intentamos eliminar la persona
+        const personaEliminada = await prisma.persona.delete({
             where: {
-                id : Number(id)
+                id: Number(id)
             }
-        })
-    return NextResponse.json("Persona removida")
-    }catch(error) {
-        console.error('Error en el endpoint:', error);
-        return NextResponse.json({ error: 'Ocurrió un error al procesar la solicitud' });
+        });
+
+        return NextResponse.json({ message: "Vivienda removida" });
+    } catch (e) {
+
+        // Verificar si el e es una violación de clave foránea (P2003)
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+            return NextResponse.json({
+                error: 'La vivienda está siendo referenciada por otra entidad',
+            }, { status: 400 }); // Respuesta 400: error del cliente            
+            /*
+            if (e.code === 'P2003') {
+
+            }
+            */
+        }
+
+        // Manejo de errores genéricos
+        return NextResponse.json({
+            error: 'Ocurrió un error inesperado al procesar la solicitud.',
+        }, { status: 500 }); // Respuesta 500: error del servidor
     }    
 }

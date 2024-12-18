@@ -24,7 +24,11 @@ export default function ResultsTable({ tableName, tableData, loadingState, reloa
   const [itemToUpdate, setItemToUpdate] = useState<any>(null);
   const [showModal, setShowModal] = useState(false);
   //Para los modales de mensajes de éxito o fracaso
-  const [modalMessage, setModalMessage] = useState<{on: boolean, message: string}>({on: false, message: ""}) 
+  const [modalMessage, setModalMessage] = useState<{
+    on: boolean, 
+    message: string,
+    success: boolean
+  }>({on: false, message: "", success: false}) 
 
   const handleDelete = (entry: {}) => {
     // Muestra el modal cuando se presiona el botón de eliminar
@@ -42,8 +46,10 @@ export default function ResultsTable({ tableName, tableData, loadingState, reloa
       setItemToDelete(null);      
 
       if (res.status === 200 || res.status === 202 || res.status === 204){        
-        setModalMessage({on: true, message: `Éxito! ${res.message}`})
-      } else { setModalMessage({on: true, message: `Error ${res.message}`})}
+        setModalMessage({on: true, message: `Éxito: ${res.message}`, success: true})
+      } else { 
+        setModalMessage({on: true, message: `Error: ${res.message}`, success: false})
+      }
       
     }
       
@@ -70,7 +76,7 @@ export default function ResultsTable({ tableName, tableData, loadingState, reloa
     setItemToDelete(null);
     setItemToUpdate(null);
     setShowModal(false);
-    setModalMessage({on: false, message: ""})
+    setModalMessage({on: false, message: "", success: false})
   };
 
   return (
@@ -168,6 +174,7 @@ export default function ResultsTable({ tableName, tableData, loadingState, reloa
           <ModalContentMessage
           title = "Resultado" 
           message = {modalMessage.message} 
+          success = {modalMessage.success}
           acceptHandle = {() => {cancel(); reloadTable((prev) => prev + 1);}}
           />
         }/>

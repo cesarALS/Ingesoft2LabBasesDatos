@@ -55,7 +55,6 @@ export async function GET(request, {params}) {
             // Dependiendo del tipo de dato y la columna, establecer las restricciones
             switch (column_name) {
                 case 'poblacion':
-                    constraints.min = 0; 
                     constraints.step = 1000; 
                     break;
                 case 'gobernador':

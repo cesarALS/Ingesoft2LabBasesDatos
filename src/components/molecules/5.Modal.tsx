@@ -9,7 +9,7 @@ interface modalSon {
 export function Modal( { son }: modalSon ){
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50">
-            <div className="flex flex-col gap-4 justify-center bg-white p-8 rounded-md shadow-lg">
+            <div className="flex flex-col gap-4 justify-center items-center bg-white p-8 rounded-md shadow-lg">
                 {son}
             </div>
         </div>

@@ -54,20 +54,22 @@ export async function deleteRow(entryId: string, tableName: string): Promise<{st
     
     const responseData = await response.json();
 
+    console.log(response)
     if (response.ok) {
+      
       return {
         status: response.status,
-        message: `Registro con Identificador ${entryId} Borrado con éxito`
+        message: responseData.message
       }
     } else {
       return {
         status: response.status,
-        message: `No se pudo borrar, porque: ${response.status}: ${responseData.message}`
+        message: responseData.error
       }
     }
   } catch(error){
     // Esta sección se ejecuta si hay un error en la solicitud al endpoint
-    console.error("Error al hacer la solicitud al Endpoint!!! ", error.message);
+    console.log("Error al hacer la solicitud al Endpoint!!! ", error.message);
     return {
         status: 500,
         message: `Error al hacer la solicitud. Vuelve a intentarlo`
