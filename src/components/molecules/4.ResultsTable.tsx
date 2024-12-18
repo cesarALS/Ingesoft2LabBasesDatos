@@ -79,30 +79,32 @@ export default function ResultsTable({ tableName, tableData, loadingState, reloa
     setModalMessage({on: false, message: "", success: false})
   };
 
+  const headerKeys = Object.keys(headers);
+
   return (
     <div>
       <div className="overflow-x-auto h-[40vh] rounded-md">
         <table className="min-w-full table-auto border-collapse">
           <thead>
             <tr>
-              {Object.entries(headers).map(([key, header], index) => (
+              {headerKeys.map((key, index) => (
                 <th key={index} className="border-b px-4 py-2 bg-gray-300">
                   {toUpperCaseFirst(key)}
                 </th>
-              ))}              
+              ))}        
               <th className="border-b px-4 py-2 bg-gray-300">Editar</th>
             </tr>
           </thead>
           <tbody>
             {data.map((entry, index) => (
             <tr key={index} className="border-b hover:bg-gray-200">
-              {Object.keys(entry).map((key) => (
-                <td key={key} className="text-center px-4 py-2">
-                  {(headers[key].type === "date") ? (new Date(entry[key]).toLocaleDateString())
-                  : (entry[key])
-                  }
-                </td>
-              ))}
+                {headerKeys.map((key) => (
+                  <td key={key} className="text-center px-4 py-2">
+                    {headers[key].type === "date"
+                      ? new Date(entry[key]).toLocaleDateString()
+                      : entry[key]}
+                  </td>
+                ))}
               <td className="flex justify-center px-4 py-2">
                 {erasable ? (
                     <>
