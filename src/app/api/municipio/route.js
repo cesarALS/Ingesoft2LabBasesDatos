@@ -30,7 +30,7 @@ export async function GET(request, {params}) {
         // Consulta de nombres y tipos de columnas
         const columnasInfo = await prisma.$queryRaw
         `
-            SELECT column_name, data_type
+            SELECT column_name, data_type, character_maximum_length, numeric_precision
             FROM information_schema.columns
             WHERE table_name = 'Municipio'
             ORDER BY ordinal_position;

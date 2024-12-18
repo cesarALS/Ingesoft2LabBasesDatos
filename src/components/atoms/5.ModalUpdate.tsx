@@ -29,6 +29,7 @@ export default function ModalUpdate(
 
     const onSubmit = () => {
         console.log(formik.values)
+        // Aquí iría la confirm option, que no haría otra cosa que enviar la solicitud a la BD de update
     }
     
 
@@ -75,7 +76,6 @@ export default function ModalUpdate(
                 <div className="flex justify-center gap-6">
                     <button
                         type="submit"
-                        //onClick={confirmAction}
                         className={`bg-yellow-400 hover:bg-yellow-500 text-gray-500 px-4 py-2 rounded`}
                     >
                         Actualizar
