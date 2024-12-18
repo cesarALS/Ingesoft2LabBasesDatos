@@ -18,23 +18,25 @@ export default function ModalCreate(
     var initVals: {[key: string]: String|Number} = {};
     
     Object.keys(headers).forEach(attr => {
-        if (!headers[attr].possibleValues){
-            switch (getFormType(headers[attr].type)){
-                case "text":
-                    initVals[String(attr)] = "";
-                    break;
-                case "number":
-                    initVals[String(attr)] = 0;
-                    break;
-                case "date":
-                    initVals[String(attr)] = "";
-                    break;
-                default:
-                    initVals[String(attr)] = "";                        
-            }
-        } else {
-            initVals[String(attr)] = headers[attr].possibleValues[0]
-        }        
+        if (headers[attr].choosableInCreate) {        
+            if (!headers[attr].possibleValues){
+                switch (getFormType(headers[attr].type)){
+                    case "text":
+                        initVals[String(attr)] = "";
+                        break;
+                    case "number":
+                        initVals[String(attr)] = 0;
+                        break;
+                    case "date":
+                        initVals[String(attr)] = "";
+                        break;
+                    default:
+                        initVals[String(attr)] = "";                        
+                }
+            } else {
+                initVals[String(attr)] = headers[attr].possibleValues[0]
+            } 
+        }      
     });
 
     const onSubmit = () => {
@@ -55,7 +57,7 @@ export default function ModalCreate(
         <form onSubmit={formik.handleSubmit}>
             <div className="grid gap-7">
                 <div className="grid rounded-md">
-                    {Object.keys(headers).map((attr) => (
+                    {Object.keys(initVals).map((attr) => (
                         <div
                             key={attr}
                             className="grid grid-cols-2 items-center hover:bg-gray-100"
