@@ -61,12 +61,19 @@ export async function GET(request, {params}) {
                 case 'telefono':
                     constraints.minLength = columnInfo.character_maximum_length
                     constraints.maxLength = columnInfo.character_maximum_length;
-                    constraints.pattern = /^3\d{9}$/
+                    // constraints.pattern = "/^3\d{9}$/"
                     break;
                 case 'pisos':
                     constraints.max = 10
             }
-        }                
+
+            
+            
+            return constraints;
+
+        }
+        
+        
 
         // Formatear la información de las columnas
         const headers = columnasInfo.reduce((acc, col) => {
