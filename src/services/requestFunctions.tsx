@@ -24,7 +24,7 @@ export async function getTable(table: string): Promise<Table> {
       };
     }
   } catch (error) {
-    console.error('Error en la solicitud:', error);
+    console.error('Problema en la solicitud:', error);
     return {
       headers: [],
       data: [],
@@ -72,13 +72,19 @@ export async function deleteRow(entryId: string, tableName: string): Promise<{st
     console.log("Error al hacer la solicitud al Endpoint!!! ", error.message);
     return {
         status: 500,
-        message: `Error al hacer la solicitud. Vuelve a intentarlo`
+        message: `Problema al hacer la solicitud. Vuelve a intentarlo`
     }
   }
 
 };
 
-export async function updateRow(tableName: string, id: string, data: {}){
+export async function updateRow(id: string, data: {}, tableName: string){
+  
+  console.log("id")
+  console.log(id)
+  console.log("data")
+  console.log(data)
+
   
   try{
     const response = await fetch(`/api/${tableName}`, {
@@ -101,6 +107,8 @@ export async function updateRow(tableName: string, id: string, data: {}){
         message: responseData.message
       }
     } else {
+      console.log("Aqui")
+      console.log(response)
       return {
         status: response.status,
         message: responseData.error
@@ -110,7 +118,7 @@ export async function updateRow(tableName: string, id: string, data: {}){
     console.log(e)
     return {
       status: 500,
-      message: `Error al hacer la solicitud. Vuelve a intentarlo`
+      message: `Problema al hacer la solicitud. Vuelve a intentarlo`
     }    
   }
 

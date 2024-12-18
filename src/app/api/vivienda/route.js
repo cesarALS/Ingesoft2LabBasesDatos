@@ -95,7 +95,7 @@ export async function GET(request, {params}) {
     }    
   }
 
-  export async function DELETE(request, { params }) {
+export async function DELETE(request, { params }) {
     try {
         const { searchParams } = new URL(request.url);
         const id = searchParams.get('id');

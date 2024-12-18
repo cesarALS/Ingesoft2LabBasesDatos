@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import {prisma} from '@/libs/prisma'
 import JSONBig from 'json-bigint';
+import { Prisma } from '@prisma/client'
 
 export async function GET(request, {params}) {
     try {

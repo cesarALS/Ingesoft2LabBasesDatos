@@ -18,7 +18,6 @@ export default function ModalUpdate(
     var initVals: {[key: string]: String|Number} = {};
     
     Object.keys(entry).forEach(attr => {
-        console.log(attr)
         if (headers[attr].modifiable) {
             if (!headers[attr].possibleValues){
                 switch (getFormType(headers[attr].type)){
@@ -41,11 +40,19 @@ export default function ModalUpdate(
         }
     })
 
-    console.log(initVals)
-
     const onSubmit = () => {
         console.log(formik.values)
-        // confirmAction()
+        var pk = null;
+        Object.keys(entry).forEach(attr =>{
+            if (headers[attr].isPrimaryKey) pk = entry[attr];
+        })
+        const data = formik.values
+        for (let key in data) {
+            if(getFormType(headers[key].type) === "number"){
+                data[key] = parseInt(data[key], 10)
+            }
+        }
+        confirmAction(pk, data);
         // Aquí iría la confirm option, que no haría otra cosa que enviar la solicitud a la BD de update
     }
     
@@ -54,8 +61,6 @@ export default function ModalUpdate(
         initialValues: initVals,
         onSubmit
     })
-
-    console.log(formik)
 
     return (
         <>
@@ -98,13 +103,15 @@ export default function ModalUpdate(
                                         pattern={headers[attr].constraints?.pattern}
                                         value={formik.values[attr]}
                                         onChange={formik.handleChange}
+                                        required={true}
                                         />
                                     ) : (
                                         <select
                                         id={attr}
                                         className="text-center rounded-md border-[0.1em]"
                                         value={formik.values[attr]}
-                                        onChange={formik.handleChange}                                
+                                        onChange={formik.handleChange}  
+                                        itemType=""                              
                                         >
                                             {
                                                 headers[attr].possibleValues.map((valueInRange) => (

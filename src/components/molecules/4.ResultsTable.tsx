@@ -3,7 +3,7 @@ import { PencilIcon } from "@heroicons/react/24/solid";
 import { FaTrash } from "react-icons/fa";
 import { Modal } from "@/components/molecules/5.Modal"
 import ModalContentMessage from "../atoms/3.ModalContentMessage";
-import { deleteRow  } from "@/services/requestFunctions";
+import { deleteRow, updateRow  } from "@/services/requestFunctions";
 import { Table } from "@/types/types"
 import { toUpperCaseFirst } from "@/utils/stringUtils";
 import ModalDelete from "../atoms/4.ModalDelete";
@@ -56,8 +56,6 @@ export default function ResultsTable({ tableName, tableData, loadingState, reloa
     await deleteData();
   };
 
-  useEffect(() => {}, []); // Esta función será importante para rehacer la búsqueda de la tabla
-
   //------------------------------------------------------------------------
 
   const handleUpdate = (entry: {}) => {
@@ -65,11 +63,24 @@ export default function ResultsTable({ tableName, tableData, loadingState, reloa
     setShowModal(true);
   }
 
-  const confirmUpdate = () => {
-    if (itemToUpdate) {
-      //confirmDelete();
-      setShowModal(false);
+  const confirmUpdate = async (id: string, bod: {}) => {
+    const updateData = async () => {
+      loadingState({on: true, message: "Actualizando"});
+      const res = await updateRow(id, bod, tableName);
+      loadingState({on: false, message: ""});
+      
+      setItemToUpdate(null)
+
+      if (res.status === 200 || res.status === 202 || res.status === 204){        
+        setModalMessage({on: true, message: `Éxito: ${res.message}`, success: true})
+      } else { 
+        console.log(res.status)
+        setModalMessage({on: true, message: `Error: ${res.message}`, success: false})
+      }
+
     }
+
+    await updateData();
   }
 
   const cancel = () => {

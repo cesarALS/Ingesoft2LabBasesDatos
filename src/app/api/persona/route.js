@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import {prisma} from '@/libs/prisma'
+import { Prisma } from '@prisma/client'
 import JSONBig from 'json-bigint';
 
 export async function GET(request, {params}) {    
@@ -113,17 +114,18 @@ export async function GET(request, {params}) {
   
 export async function PUT (request, {params}){
        
-    const { id, data } = request.body;
+    try {   
+        
+        const { id, data } = await request.json();
 
-    // Validar que el ID y los datos existen
-    if (!id || !data) {
-        return new NextResponse.json(
-            {error: 'El ID y los datos son obligatorios'},
-            {status: 400}
-        )
-    }
+        // Validar que el ID y los datos existen
+        if (!id || !data) {
+            return NextResponse.json(
+                {error: 'El ID y los datos son obligatorios'},
+                {status: 400}
+            )
+        }
 
-    try {
       // Actualizar el registro en la base de datos
       const updatedPersona = await prisma.persona.update({
         where: { id }, // Identifica el registro
@@ -131,13 +133,18 @@ export async function PUT (request, {params}){
       });
 
       // Devolver la respuesta
-      return new NextResponse.json(
+      return NextResponse.json(
         {message: 'Persona actualizada'},
         {status: 200}
       )
     } catch (e) {
-      console.log(e);
-      return new NextResponse.json(
+      // console.log(e);
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        return NextResponse.json({
+            error: 'Error en el ciente',
+        }, { status: 400 });        
+      }
+      return NextResponse.json(
         {message: 'Error actualizando la persona'},
         {status: 500}
       );
@@ -160,10 +167,10 @@ export async function DELETE(request, {params}) {
         return NextResponse.json({ message: "Vivienda removida" });
     } catch (e) {
 
-        // Verificar si el e es una violación de clave foránea (P2003)
+        
         if (e instanceof Prisma.PrismaClientKnownRequestError) {
             return NextResponse.json({
-                error: 'La vivienda está siendo referenciada por otra entidad',
+                error: 'Error en el cliente',
             }, { status: 400 }); // Respuesta 400: error del cliente            
             /*
             if (e.code === 'P2003') {
