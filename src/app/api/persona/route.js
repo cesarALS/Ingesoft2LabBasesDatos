@@ -41,6 +41,7 @@ export async function GET(request, {params}) {
         // Determinar cuáles columnas son modificables
         const columnasModificables = ['telefono','genero','vivienda_id'];
         const ids = ['id']
+        const notChoosableInCreate = []
 
         function defPossibleValues(column_name, colsInfo) {
             let constraints = {
@@ -94,7 +95,8 @@ export async function GET(request, {params}) {
                 modifiable: columnasModificables.includes(col.column_name),
                 constraints: constraints,
                 possibleValues: possibleValues,
-                isPrimaryKey: ids.includes(col.column_name)
+                isPrimaryKey: ids.includes(col.column_name),
+                choosableInCreate: !notChoosableInCreate.includes(col.column_name),
             };
         }
 
