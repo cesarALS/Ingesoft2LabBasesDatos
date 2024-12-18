@@ -20,8 +20,24 @@ export default function ModalUpdate(
     Object.keys(entry).forEach(attr => {
         console.log(attr)
         if (headers[attr].modifiable) {
-            console.log(`${attr}: Modifiable`)
-            initVals[String(attr)] = ""
+            if (!headers[attr].possibleValues){
+                switch (getFormType(headers[attr].type)){
+                    case "text":
+                        initVals[String(attr)] = "";
+                        break;
+                    case "number":
+                        initVals[String(attr)] = 0;
+                        break;
+                    case "date":
+                        initVals[String(attr)] = "";
+                        break;
+                    default:
+                        initVals[String(attr)] = "";                        
+                }
+            } else {
+                initVals[String(attr)] = headers[attr].possibleValues[0]
+            }
+            
         }
     })
 
@@ -29,6 +45,7 @@ export default function ModalUpdate(
 
     const onSubmit = () => {
         console.log(formik.values)
+        // confirmAction()
         // Aquí iría la confirm option, que no haría otra cosa que enviar la solicitud a la BD de update
     }
     

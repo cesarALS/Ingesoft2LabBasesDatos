@@ -41,6 +41,7 @@ export async function GET(request, {params}) {
         
         // Determinar cuáles columnas son modificables
         const columnasModificables = ['direccion','pisos'];
+        const ids = ['id']
 
         function defPossibleValues(column_name, colsInfo) {
             let constraints = {
@@ -79,7 +80,8 @@ export async function GET(request, {params}) {
                 type: col.data_type,
                 modifiable: columnasModificables.includes(col.column_name),
                 constraints: constraints,
-                possibleValues: null      
+                possibleValues: null,
+                isPrimaryKey: ids.includes(col.column_name)      
             };
             return acc;
         }, {});

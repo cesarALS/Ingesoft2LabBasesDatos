@@ -13,6 +13,8 @@ interface ModalDeleteProps {
 export default function ModalDelete (
     {headers, entry, confirmAction, cancelAction} : ModalDeleteProps
 ){
+
+    const headerKeys = Object.keys(headers);
     return (
         <>
             <h2 className="text-xl font-bold mb-4 text-center">
@@ -21,7 +23,7 @@ export default function ModalDelete (
             <table>
                 <thead>
                     <tr>
-                        {Object.entries(headers).map(([key, header], index) => (
+                        {headerKeys.map((key, index) => (
                         <th key={index} className="border-b px-4 py-2 bg-gray-300 text-center border-2">
                             {toUpperCaseFirst(key)}
                         </th>
@@ -30,10 +32,12 @@ export default function ModalDelete (
                 </thead>      
                 <tbody>
                 <tr key="unique-entry" className="border-b">
-                    {Object.keys(entry).map((key) => (                        
-                        <td key={key} className="text-center py-2 px-2">
-                            {entry[key]}
-                        </td>
+                    {headerKeys.map((key) => (
+                    <td key={key} className="text-center px-4 py-2">
+                        {headers[key].type === "date"
+                        ? new Date(entry[key]).toLocaleDateString()
+                        : entry[key]}
+                    </td>
                     ))}
                 </tr>                        
                 </tbody>                      

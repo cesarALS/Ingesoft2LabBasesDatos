@@ -11,6 +11,7 @@ export type TableHeader = {
     modifiable: boolean
     constraints: AttributeConstraints | null
     possibleValues: string[] | number[] | null
+    isPrimaryKey: boolean // Si la llave primaria está compuesta de más, no importa: se muestra como id
 };
 
 export interface TableHeaders {

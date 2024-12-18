@@ -77,3 +77,41 @@ export async function deleteRow(entryId: string, tableName: string): Promise<{st
   }
 
 };
+
+export async function updateRow(tableName: string, id: string, data: {}){
+  
+  try{
+    const response = await fetch(`/api/${tableName}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },      
+        body: JSON.stringify({
+          id: id,
+          data: data
+        }),
+      }
+    );
+
+    const responseData = await response.json();
+
+    console.log(response)
+    if (response.ok) {
+      
+      return {
+        status: response.status,
+        message: responseData.message
+      }
+    } else {
+      return {
+        status: response.status,
+        message: responseData.error
+      }
+    }
+  } catch (e){
+    console.log(e)
+    return {
+      status: 500,
+      message: `Error al hacer la solicitud. Vuelve a intentarlo`
+    }    
+  }
+
+}

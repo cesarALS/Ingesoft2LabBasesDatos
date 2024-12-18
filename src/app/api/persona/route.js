@@ -39,6 +39,7 @@ export async function GET(request, {params}) {
         
         // Determinar cuáles columnas son modificables
         const columnasModificables = ['telefono','genero','vivienda_id'];
+        const ids = ['id']
 
         function defPossibleValues(column_name, colsInfo) {
             let constraints = {
@@ -92,6 +93,7 @@ export async function GET(request, {params}) {
                 modifiable: columnasModificables.includes(col.column_name),
                 constraints: constraints,
                 possibleValues: possibleValues,
+                isPrimaryKey: ids.includes(col.column_name)
             };
         }
 
@@ -109,8 +111,41 @@ export async function GET(request, {params}) {
      
   }
   
+export async function PUT (request, {params}){
+       
+    const { id, data } = request.body;
+
+    // Validar que el ID y los datos existen
+    if (!id || !data) {
+        return new NextResponse.json(
+            {error: 'El ID y los datos son obligatorios'},
+            {status: 400}
+        )
+    }
+
+    try {
+      // Actualizar el registro en la base de datos
+      const updatedPersona = await prisma.persona.update({
+        where: { id }, // Identifica el registro
+        data, // Datos para actualizar
+      });
+
+      // Devolver la respuesta
+      return new NextResponse.json(
+        {message: 'Persona actualizada'},
+        {status: 200}
+      )
+    } catch (e) {
+      console.log(e);
+      return new NextResponse.json(
+        {message: 'Error actualizando la persona'},
+        {status: 500}
+      );
+    }
+} 
   
-  export async function DELETE(request, {params}) {
+export async function DELETE(request, {params}) {
+    
     try {
         const {searchParams} = new URL(request.url);
         const id = searchParams.get('id');

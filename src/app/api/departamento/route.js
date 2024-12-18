@@ -33,7 +33,7 @@ export async function GET(request, {params}) {
         
         // Determinar cuáles columnas son modificables
         const columnasModificables = ['poblacion','gobernador'];
-        const erasable = []    
+        const ids = ['nombre'];
 
         function defPossibleValues(column_name, colsInfo) {
             let constraints = {
@@ -70,7 +70,8 @@ export async function GET(request, {params}) {
                 type: col.data_type,
                 modifiable: columnasModificables.includes(col.column_name),
                 constraints: constraints,
-                possibleValues: null
+                possibleValues: null,
+                isPrimaryKey: ids.includes(col.column_name)
             };
             return acc;
         }, {});
