@@ -87,7 +87,7 @@ export async function GET(request, {params}) {
         }, {});    
 
         //console.log(data)
-        return NextResponse.json({headers,data,erasable:false})       
+        return NextResponse.json({headers,data,erasable:true})       
 
     } catch (error) {
     console.error('Error en el endpoint:', error);
@@ -133,3 +133,38 @@ export async function GET(request, {params}) {
         );
       }
   } 
+
+export async function DELETE(request, {params}) {
+    
+    try {
+        const {searchParams} = new URL(request.url);
+        const id = searchParams.get('id');
+
+        // Intentamos eliminar el municipio
+        const departamentoEliminado = await prisma.municipio.delete({
+            where: {
+                id: Number(id)
+            }
+        });
+
+        return NextResponse.json({ message: "Municipio removido" });
+    } catch (e) {
+
+        
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+            return NextResponse.json({
+                error: 'Error en el cliente',
+            }, { status: 400 }); // Respuesta 400: error del cliente            
+            /*
+            if (e.code === 'P2003') {
+
+            }
+            */
+        }
+
+        // Manejo de errores genéricos
+        return NextResponse.json({
+            error: 'Ocurrió un error inesperado al procesar la solicitud.',
+        }, { status: 500 }); // Respuesta 500: error del servidor
+    }    
+}
