@@ -6,7 +6,7 @@ import { getFormType } from "@/utils/BDUtils"
 interface ModalUpdateProps {
     headers: TableHeaders
     entry: DataEntry,
-    confirmAction: (() => void) | {} | (() => void)
+    confirmAction: (id: string, bod: {}) => Promise<void>
     cancelAction: (() => void) | {} | (() => void)    
 }
 
@@ -15,7 +15,7 @@ export default function ModalUpdate(
 ){
     
     // Si da el tiempo, se pueden añadir tipos de Date
-    var initVals: {[key: string]: String|Number} = {};
+    var initVals: {[key: string]: string|number|readonly string[] | undefined} = {};
     
     Object.keys(entry).forEach(attr => {
         if (headers[attr].modifiable) {
@@ -42,14 +42,14 @@ export default function ModalUpdate(
 
     const onSubmit = () => {
         console.log(formik.values)
-        var pk = null;
+        var pk = "";
         Object.keys(entry).forEach(attr =>{
             if (headers[attr].isPrimaryKey) pk = entry[attr];
         })
         const data = formik.values
         for (let key in data) {
             if(getFormType(headers[key].type) === "number"){
-                data[key] = parseInt(data[key], 10)
+                data[key] = parseInt(String(data[key]), 10)
             }
         }
         confirmAction(pk, data);
@@ -95,7 +95,7 @@ export default function ModalUpdate(
                                         className="text-center rounded-md border-[0.1em]"
                                         type={getFormType(headers[attr].type)}
                                         id={attr}
-                                        placeholder={entry[attr]}
+                                        placeholder={String(entry[attr])}
                                         minLength={headers[attr].constraints?.minLength}
                                         maxLength={headers[attr].constraints?.maxLength}
                                         min={headers[attr].constraints?.min}

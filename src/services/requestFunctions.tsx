@@ -35,7 +35,7 @@ export async function getTable(table: string): Promise<Table> {
 };
 
 // Esta función borra un registro de una tabla de la BD
-export async function deleteRow(entryId: string, tableName: string): Promise<{status: number, message: string}> {
+export async function deleteRow(entryId: string|number, tableName: string): Promise<{status: number, message: string}> {
 
   try {
     
@@ -69,7 +69,7 @@ export async function deleteRow(entryId: string, tableName: string): Promise<{st
     }
   } catch(error){
     // Esta sección se ejecuta si hay un error en la solicitud al endpoint
-    console.log("Error al hacer la solicitud al Endpoint!!! ", error.message);
+    //console.log("Error al hacer la solicitud al Endpoint!!! ", error.message);
     return {
         status: 500,
         message: `Problema al hacer la solicitud. Vuelve a intentarlo`

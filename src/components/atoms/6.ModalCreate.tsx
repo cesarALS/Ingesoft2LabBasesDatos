@@ -15,7 +15,7 @@ export default function ModalCreate(
     { headers, confirmAction, cancelAction } : ModalCreateProps
 ){
 
-    var initVals: {[key: string]: String|Number} = {};
+    var initVals: {[key: string]: string|number|readonly string[] | undefined} = {};
     
     Object.keys(headers).forEach(attr => {
         if (headers[attr].choosableInCreate) {        
@@ -71,7 +71,7 @@ export default function ModalCreate(
                                     className="text-center rounded-md border-[0.1em]"
                                     type={getFormType(headers[attr].type)}
                                     id={attr}
-                                    placeholder={initVals[attr]}
+                                    placeholder={String(initVals[attr])}
                                     minLength={headers[attr].constraints?.minLength}
                                     maxLength={headers[attr].constraints?.maxLength}
                                     min={headers[attr].constraints?.min}

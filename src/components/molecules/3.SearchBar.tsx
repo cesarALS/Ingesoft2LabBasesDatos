@@ -3,11 +3,11 @@ import { MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/24/solid"
 import { toUpperCaseFirst } from "@/utils/stringUtils";
 import { Modal } from "./5.Modal";
 import ModalCreate from "@/components/atoms/6.ModalCreate"
-import { TableHeader } from "@/types/types"
+import { TableHeaders } from "@/types/types"
 
 
 interface SearchBarProps {
-  headers: TableHeader;
+  headers: TableHeaders;
   erasable: boolean
 }
 
@@ -86,7 +86,8 @@ export default function SearchBar({ headers, erasable }: SearchBarProps) {
         son = {
           <ModalCreate
           cancelAction={cancel}   
-          headers={headers}       
+          headers={headers}    
+          confirmAction={()=>{}}   
           />
         }
         />

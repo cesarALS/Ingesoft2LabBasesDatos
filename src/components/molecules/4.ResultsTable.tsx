@@ -13,7 +13,7 @@ interface ResultsTableProps {
   tableName: string
   tableData: Table
   loadingState: Function
-  reloadTable: Function
+  reloadTable: React.Dispatch<React.SetStateAction<number>>
 }
 
 export default function ResultsTable({ tableName, tableData, loadingState, reloadTable }: ResultsTableProps) {
