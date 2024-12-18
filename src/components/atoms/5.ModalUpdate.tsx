@@ -42,82 +42,86 @@ export default function ModalUpdate(
 
     return (
         <>
-            <h2 className="text-xl font-bold mb-4 text-center">
+            <p className="text-[1.3em] font-bold mb-4 text-center">
                 Actualiza el Registro
-            </h2> 
+            </p> 
             <form onSubmit={formik.handleSubmit}>
-            <div className="grid rounded-md">
-                {Object.keys(headers).map((attr) => (
-                <div
-                    key={attr}
-                    className="grid grid-cols-2 items-center hover:bg-gray-100"
-                >
-                    <div className="flex border-2 h-[100%] items-center justify-center p-2">
-                        <p className="font-bold text-center">{toUpperCaseFirst(attr)}</p>
-                    </div>
-                    {
-                        !headers[attr].possibleValues ? (
+                <div className="grid gap-7">
+                    <div className="grid rounded-md">
+                        {Object.keys(headers).map((attr) => (
+                        <div
+                            key={attr}
+                            className="grid grid-cols-2 items-center hover:bg-gray-100"
+                        >
                             <div className="flex border-2 h-[100%] items-center justify-center p-2">
-                                {headers[attr].modifiable ? (
-                                    <input
-                                    className="text-center rounded-md border-[0.1em]"
-                                    type={getFormType(headers[attr].type)}
-                                    id={attr}
-                                    placeholder={entry[attr]}
-                                    minLength={headers[attr].constraints?.minLength}
-                                    maxLength={headers[attr].constraints?.maxLength}
-                                    min={headers[attr].constraints?.min}
-                                    max={headers[attr].constraints?.max}                            
-                                    pattern={headers[attr].constraints?.pattern}
-                                    value={formik.values[attr]}
-                                    onChange={formik.handleChange}
-                                    />                            
+                                <p className="font-bold text-center">{toUpperCaseFirst(attr)}</p>
+                            </div>
+                            <div className="flex border-2 h-[100%] items-center justify-center p-2">                    
+                            {
+                                !headers[attr].modifiable ? (
+                                    <p className="text-center"> 
+                                        {!(headers[attr].type === "date") ? (
+                                            entry[attr]
+                                        ) : (
+                                            new Date(entry[attr]).toISOString().split("T")[0]
+                                        )                                        
+                                        } 
+                                    </p>   
                                 ) : (
-                                    <p className="text-center"> {entry[attr]} </p>    
-                                )}                        
+                                    !headers[attr].possibleValues ? (
+                                        <input
+                                        className="text-center rounded-md border-[0.1em]"
+                                        type={getFormType(headers[attr].type)}
+                                        id={attr}
+                                        placeholder={entry[attr]}
+                                        minLength={headers[attr].constraints?.minLength}
+                                        maxLength={headers[attr].constraints?.maxLength}
+                                        min={headers[attr].constraints?.min}
+                                        max={headers[attr].constraints?.max}                            
+                                        pattern={headers[attr].constraints?.pattern}
+                                        value={formik.values[attr]}
+                                        onChange={formik.handleChange}
+                                        />
+                                    ) : (
+                                        <select
+                                        id={attr}
+                                        className="text-center rounded-md border-[0.1em]"
+                                        value={formik.values[attr]}
+                                        onChange={formik.handleChange}                                
+                                        >
+                                            {
+                                                headers[attr].possibleValues.map((valueInRange) => (
+                                                    <option 
+                                                    key={valueInRange} 
+                                                    value={valueInRange}
+                                                    >
+                                                        {toUpperCaseFirst(String(valueInRange))}
+                                                    </option>
+                                                ))}
+                                        </select>
+                                    )
+                                )
+                            }
                             </div>
-                        ) : (
-                            <div className="flex border-2 h-[100%] items-center justify-center p-2">
-                                <select
-                                id={attr}
-                                className="text-center rounded-md border-[0.1em]"
-                                value={formik.values[attr]}
-                                onChange={formik.handleChange}                                
-                                >
-                                    {
-                                        headers[attr].possibleValues.map((valueInRange) => (
-                                            <option 
-                                            key={valueInRange} 
-                                            value={valueInRange}
-                                            >
-                                                {toUpperCaseFirst(String(valueInRange))}
-                                            </option>
-                                        ))
-                                    }
-                                </select>
-                            </div>
-                        )
-                    }        
-
-
-                </div>
-                ))}
-            </div>                
-                <div className="flex justify-center gap-6">
-                    <button
-                        type="submit"
-                        className={`bg-yellow-400 hover:bg-yellow-500 text-gray-500 px-4 py-2 rounded`}
-                    >
-                        Actualizar
-                    </button>
-                    <button
-                        type="button"
-                        onClick={cancelAction}
-                        className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"                        
-                    >                            
-                        Cancelar
-                    </button>                  
-                </div>    
+                        </div>
+                        ))}
+                    </div>                
+                    <div className="flex justify-center gap-6">
+                        <button
+                            type="submit"
+                            className={`bg-yellow-400 hover:bg-yellow-500 text-gray-500 px-4 py-2 rounded`}
+                        >
+                            Actualizar
+                        </button>
+                        <button
+                            type="button"
+                            onClick={cancelAction}
+                            className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"                        
+                        >                            
+                            Cancelar
+                        </button>                  
+                    </div>
+                </div>        
             </form>                   
         </>
     );
