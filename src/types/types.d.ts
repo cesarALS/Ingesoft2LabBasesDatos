@@ -10,7 +10,7 @@ export type TableHeader = {
     type: string    
     modifiable: boolean
     constraints: AttributeConstraints | null
-    possibleValues: {[name: string]: string|number} | null
+    possibleValues: string[] | number[] | null
 };
 
 export interface TableHeaders {

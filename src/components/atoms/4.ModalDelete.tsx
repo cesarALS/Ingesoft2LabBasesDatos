@@ -30,7 +30,7 @@ export default function ModalDelete (
                 </thead>      
                 <tbody>
                 <tr key="unique-entry" className="border-b">
-                    {Object.keys(entry).map((key, index) => (                        
+                    {Object.keys(entry).map((key) => (                        
                         <td key={key} className="text-center py-2 px-2">
                             {entry[key]}
                         </td>

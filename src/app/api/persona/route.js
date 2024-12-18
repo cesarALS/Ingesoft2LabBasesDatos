@@ -59,35 +59,41 @@ export async function GET(request, {params}) {
             // Dependiendo del tipo de dato y la columna, establecer las restricciones
             switch (column_name) {
                 case 'telefono':
-                    constraints.minLength = columnInfo.character_maximum_length
-                    constraints.maxLength = columnInfo.character_maximum_length;
-                    // constraints.pattern = "/^3\d{9}$/"
+                    constraints.min = 3000000000
+                    constraints.max = 3999999999
                     break;
-                case 'pisos':
-                    constraints.max = 10
-            }
-
-            
+            }            
             
             return constraints;
 
         }
         
-        
-
-        // Formatear la información de las columnas
-        const headers = columnasInfo.reduce((acc, col) => {
-            
+        async function defRange(column_name) {
+            switch (column_name) {
+                case 'genero':
+                    return ['femenino', 'masculino', 'otro'];
+                case 'vivienda_id':
+                    const viviendas = await prisma.vivienda.findMany({
+                        select: { id: true },
+                    });
+                    return viviendas.map(vivienda => vivienda.id);
+                default:
+                    return null;
+            }
+        }
+    
+        const headers = {};
+        for (const col of columnasInfo) {
             const constraints = defPossibleValues(col.column_name, columnasInfo);
-
-            acc[col.column_name] = {
+            const possibleValues = await defRange(col.column_name);
+    
+            headers[col.column_name] = {
                 type: col.data_type,
                 modifiable: columnasModificables.includes(col.column_name),
                 constraints: constraints,
-                possibleValues: null      
+                possibleValues: possibleValues,
             };
-            return acc;
-        }, {});
+        }
 
         // Cuerpo de la respuesta
         const responseBody = { headers, data, erasable: true };

@@ -55,26 +55,51 @@ export default function ModalUpdate(
                     <div className="flex border-2 h-[100%] items-center justify-center p-2">
                         <p className="font-bold text-center">{toUpperCaseFirst(attr)}</p>
                     </div>
-                    <div className="flex border-2 h-[100%] items-center justify-center p-2">
-                        {headers[attr].modifiable ? (
-                            <input
-                            className="text-center rounded-md border-[0.1em]"
-                            type={getFormType(headers[attr].type)}
-                            id={attr}
-                            placeholder={entry[attr]}
-                            minLength={headers[attr].constraints?.minLength}
-                            maxLength={headers[attr].constraints?.maxLength}
-                            min={headers[attr].constraints?.min}
-                            max={headers[attr].constraints?.max}                            
-                            pattern={headers[attr].constraints?.pattern}
-                            value={formik.values[attr]}
-                            onChange={formik.handleChange}
-                            />                            
+                    {
+                        !headers[attr].possibleValues ? (
+                            <div className="flex border-2 h-[100%] items-center justify-center p-2">
+                                {headers[attr].modifiable ? (
+                                    <input
+                                    className="text-center rounded-md border-[0.1em]"
+                                    type={getFormType(headers[attr].type)}
+                                    id={attr}
+                                    placeholder={entry[attr]}
+                                    minLength={headers[attr].constraints?.minLength}
+                                    maxLength={headers[attr].constraints?.maxLength}
+                                    min={headers[attr].constraints?.min}
+                                    max={headers[attr].constraints?.max}                            
+                                    pattern={headers[attr].constraints?.pattern}
+                                    value={formik.values[attr]}
+                                    onChange={formik.handleChange}
+                                    />                            
+                                ) : (
+                                    <p className="text-center"> {entry[attr]} </p>    
+                                )}                        
+                            </div>
                         ) : (
-                            <p className="text-center"> {entry[attr]} </p>    
-                        )}
-                        
-                    </div>
+                            <div className="flex border-2 h-[100%] items-center justify-center p-2">
+                                <select
+                                id={attr}
+                                className="text-center rounded-md border-[0.1em]"
+                                value={formik.values[attr]}
+                                onChange={formik.handleChange}                                
+                                >
+                                    {
+                                        headers[attr].possibleValues.map((valueInRange) => (
+                                            <option 
+                                            key={valueInRange} 
+                                            value={valueInRange}
+                                            >
+                                                {toUpperCaseFirst(String(valueInRange))}
+                                            </option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+                        )
+                    }        
+
+
                 </div>
                 ))}
             </div>                
