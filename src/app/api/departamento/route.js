@@ -83,5 +83,44 @@ export async function GET(request, {params}) {
     console.error('Error en el endpoint:', error);
     res.status(500).json({ error: 'Ocurrió un error al procesar la solicitud' });
     }    
-  }
+}
+
+export async function PUT (request, {params}){
+       
+    try {   
+        
+        const { id, data } = await request.json();
+
+        // Validar que el ID y los datos existen
+        if (!id || !data) {
+            return NextResponse.json(
+                {error: 'El ID y los datos son obligatorios'},
+                {status: 400}
+            )
+        }
+
+      // Actualizar el registro en la base de datos
+      const updatedDepartamento = await prisma.departamento.update({
+        where: { nombre: id }, // Identifica el registro
+        data, // Datos para actualizar
+      });
+
+      // Devolver la respuesta
+      return NextResponse.json(
+        {message: 'Departamento actualizado'},
+        {status: 200}
+      )
+    } catch (e) {
+      // console.log(e);
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        return NextResponse.json({
+            error: 'Error en el ciente',
+        }, { status: 400 });        
+      }
+      return NextResponse.json(
+        {message: 'Error actualizando el departamento'},
+        {status: 500}
+      );
+    }
+} 
 

@@ -128,7 +128,7 @@ export async function PUT (request, {params}){
 
       // Actualizar el registro en la base de datos
       const updatedPersona = await prisma.persona.update({
-        where: { id }, // Identifica el registro
+        where: { id: id }, // Identifica el registro
         data, // Datos para actualizar
       });
 
