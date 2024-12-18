@@ -166,7 +166,7 @@ export async function DELETE(request, {params}) {
             }
         });
 
-        return NextResponse.json({ message: "Vivienda removida" });
+        return NextResponse.json({ message: "Persona removida" });
     } catch (e) {
 
         

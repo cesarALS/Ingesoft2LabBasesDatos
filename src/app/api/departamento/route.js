@@ -145,7 +145,7 @@ export async function DELETE(request, {params}) {
         
         if (e instanceof Prisma.PrismaClientKnownRequestError) {
             return NextResponse.json({
-                error: 'Error en el cliente',
+                error: 'Otras referencias dependen del departamento',
             }, { status: 400 }); // Respuesta 400: error del cliente            
             /*
             if (e.code === 'P2003') {
