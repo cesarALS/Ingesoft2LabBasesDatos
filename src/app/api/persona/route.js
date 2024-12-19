@@ -6,7 +6,7 @@ import JSONBig from 'json-bigint';
 import { getColumnsInfo, defaultConstraints, validateAllRegisters } from "@/utils/apiUtils";
 
 // Determinar cuáles columnas son modificables
-const columnasModificables = ['telefono','genero','vivienda_id'];
+const columnasModificables = ['telefono','genero','vivienda_id','nombre'];
 const ids = ['id']
 const notChoosableInCreate = []
 
@@ -33,32 +33,22 @@ export async function GET(request, {params}) {
 
         const data = await prisma.persona.findMany({
             //where: filters
+            orderBy: {
+                vivienda_id: 'asc',  
+            },
         });
         
         // Consulta de nombres y tipos de columnas
-        const columnasInfo = await prisma.$queryRaw
-        `
-            SELECT column_name, data_type, character_maximum_length, numeric_precision
-            FROM information_schema.columns
-            WHERE table_name = 'Persona'
-            ORDER BY ordinal_position;
-        `
-        ;
+        const columnasInfo = await getColumnsInfo('Persona')
 
         function defPossibleValues(column_name, colsInfo) {
-            let constraints = {
-                minLength: 0,
-                maxLength: 100,
-                min: 0,
-                max: 999999999999,
-                pattern: ".*",
-            };
+            let constraints = Object.assign({}, defaultConstraints);
         
             // Obtener información de la columna correspondiente
             const columnInfo = colsInfo.find(col => col.column_name === column_name);
         
-            if (!columnInfo || !columnasModificables.includes(column_name)) {
-                return null; // Si no es modificable, no definimos constraints
+            if (columnInfo.data_type === "character varying") {
+                constraints.maxLength = columnInfo.character_maximum_length;
             }
         
             // Dependiendo del tipo de dato y la columna, establecer las restricciones
@@ -67,6 +57,8 @@ export async function GET(request, {params}) {
                     constraints.min = 3000000000
                     constraints.max = 3999999999
                     break;
+                case 'nombre':
+                    constraints.minLength = 3                                    
             }            
             
             return constraints;
@@ -80,6 +72,9 @@ export async function GET(request, {params}) {
                 case 'vivienda_id':
                     const viviendas = await prisma.vivienda.findMany({
                         select: { id: true },
+                        orderBy: {
+                            id: 'asc'
+                        }
                     });
                     return viviendas.map(vivienda => vivienda.id);
                 default:
@@ -173,7 +168,9 @@ export async function POST (request, {params}){
             );
         }
 
-        const newRegister = await prisma.create.departamento({
+        data.fecha_nacimiento = new Date(data.fecha_nacimiento).toISOString();
+
+        const newRegister = await prisma.persona.create({
             data: data
         })
 

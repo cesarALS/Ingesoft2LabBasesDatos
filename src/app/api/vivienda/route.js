@@ -34,62 +34,72 @@ export async function GET(request, {params}) {
 
         const data = await prisma.vivienda.findMany({
             //where: filters
+            orderBy: {
+                id: 'asc',
+            },
         });
 
         // Consulta de nombres y tipos de columnas
-        const columnasInfo = await prisma.$queryRaw
-        `
-            SELECT column_name, data_type, character_maximum_length, numeric_precision
-            FROM information_schema.columns
-            WHERE table_name = 'Vivienda'
-            ORDER BY ordinal_position;
-        `
-        ;
+        const columnasInfo = await getColumnsInfo('Vivienda');
 
         function defPossibleValues(column_name, colsInfo) {
-            let constraints = {
-                minLength: 0,
-                maxLength: 100,
-                min: 0,
-                max: 999999999999,
-                pattern: ".*",
-            };
+            let constraints = Object.assign({}, defaultConstraints);
         
             // Obtener información de la columna correspondiente
             const columnInfo = colsInfo.find(col => col.column_name === column_name);
         
-            if (!columnInfo || !columnasModificables.includes(column_name)) {
-                return null; // Si no es modificable, no definimos constraints
+            if (columnInfo.data_type === "character varying") {
+                constraints.maxLength = columnInfo.character_maximum_length;
             }
         
             // Dependiendo del tipo de dato y la columna, establecer las restricciones
             switch (column_name) {
                 case 'direccion':
-                    constraints.maxLength = columnInfo.character_maximum_length;
+                    constraints.minLength = 3;
                     break;
+                case 'tamano':
+                    constraints.max = 1000;
                 case 'pisos':
-                    constraints.min = 1
-                    constraints.max = 10
+                    constraints.min = 1;
+                    constraints.max = 10;
+                case 'municipioId':
+
             }
         
             return constraints;
-        }             
+        }
+        
+        async function defRange(column_name) {
+            switch (column_name) {
+                case 'municipioId':
+                    const municipios = await prisma.municipio.findMany({
+                        select: { id: true },
+                        orderBy: {
+                            nombre: 'asc',
+                        },
+                    });
+                    return municipios.map(municipio => municipio.id);
+                default:
+                    return null;
+            }
+        }        
 
         // Formatear la información de las columnas        
-        const headers = columnasInfo.reduce((acc, col) => {
-            
-            const constraints = defPossibleValues(col.column_name, columnasInfo);
+        const headers = {}
+        for (const col of columnasInfo) {
 
-            acc[col.column_name] = {
+            const constraints = defPossibleValues(col.column_name, columnasInfo);
+            const possibleValues = await defRange(col.column_name);
+
+            headers[col.column_name] = {
                 type: col.data_type,
                 modifiable: columnasModificables.includes(col.column_name),
                 constraints: constraints,
-                possibleValues: null,
+                possibleValues: possibleValues,
                 isPrimaryKey: ids.includes(col.column_name),
-                choosableInCreate: !notChoosableInCreate.includes(col.column_name)      
+                choosableInCreate: !notChoosableInCreate.includes(col.column_name)                
             };
-            return acc;
-        }, {});
+        };   
 
         //console.log(data)
         return NextResponse.json({headers,data,erasable:true})       
@@ -157,7 +167,7 @@ export async function POST (request, {params}){
             );
         }
 
-        const newRegister = await prisma.create.departamento({
+        const newRegister = await prisma.vivienda.create({
             data: data
         })
 

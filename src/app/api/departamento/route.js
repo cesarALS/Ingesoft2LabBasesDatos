@@ -25,7 +25,10 @@ export async function GET(request, {params}) {
         if (gobernador) filters.gobernador = { contains: gobernador, mode: 'insensitive' }; // Búsqueda parcial
         //console.log(filters)
         const data = await prisma.departamento.findMany({
-            where: filters
+            where: filters,
+            orderBy: {
+                nombre: 'asc',  
+            },
         });
 
         const columnasInfo = await getColumnsInfo('Departamento');
@@ -38,14 +41,22 @@ export async function GET(request, {params}) {
         
             // Obtener información de la columna correspondiente
             const columnInfo = colsInfo.find(col => col.column_name === column_name);
-        
+            
+            if (columnInfo.data_type === "character varying") {
+                constraints.maxLength = columnInfo.character_maximum_length;
+            }
+
             // Dependiendo del tipo de dato y la columna, establecer las restricciones
             switch (column_name) {
                 case 'gobernador':
-                    constraints.maxLength = columnInfo.character_maximum_length;
+                    constraints.minLength = 4;
                     break;
-                case 'nombre':
-                    constraints.maxLength = columnInfo.character_maximum_length;                    
+                case 'nombre':            
+                    constraints.minLength = 2;
+                    break;
+                case 'area':
+                    constraints.min = 1;
+                    break;
             }
         
             return constraints;
@@ -119,11 +130,15 @@ export async function POST (request, {params}){
     try{
         const {data} = await request.json();
 
+        console.log("Aquí vamos")
+
         const { allParameters, missingParameters } = await validateAllRegisters(
             'Departamento',
             data,
             notChoosableInCreate
         )
+
+        console.log("Aquí seguimos")
 
         if (!allParameters){
             return NextResponse.json(
@@ -132,7 +147,7 @@ export async function POST (request, {params}){
             );
         }
 
-        const newRegister = await prisma.create.departamento({
+        const newRegister = await prisma.departamento.create({
             data: data
         })
 
@@ -146,6 +161,7 @@ export async function POST (request, {params}){
             if (e.code === 'P2003') {}
             */
         } else {
+            console.log(e);
             return NextResponse.json({
                 error: 'Ocurrió un error inesperado al procesar la solicitud.',
             }, { status: 500 }); // Respuesta 500: error del servidor            

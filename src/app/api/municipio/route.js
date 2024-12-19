@@ -32,61 +32,71 @@ export async function GET(request, {params}) {
         //console.log(filters)
 
         const data = await prisma.municipio.findMany({
-            where: filters
+            where: filters,
+            orderBy: {
+                nombre: 'asc',  
+            },
+
         });
 
-        // Consulta de nombres y tipos de columnas
-        const columnasInfo = await prisma.$queryRaw
-        `
-            SELECT column_name, data_type, character_maximum_length, numeric_precision
-            FROM information_schema.columns
-            WHERE table_name = 'Municipio'
-            ORDER BY ordinal_position;
-        `
-        ;
+        const columnasInfo = await getColumnsInfo('Municipio')
 
         function defPossibleValues(column_name, colsInfo) {
-            let constraints = {
-                minLength: 0,
-                maxLength: 100,
-                min: 0,
-                max: 999999999999,
-                pattern: ".*",
-            };
+            let constraints = Object.assign({}, defaultConstraints);
         
             // Obtener información de la columna correspondiente
             const columnInfo = colsInfo.find(col => col.column_name === column_name);
-        
-            if (!columnInfo || !columnasModificables.includes(column_name)) {
-                return null; // Si no es modificable, no definimos constraints
+
+            if (columnInfo.data_type === "character varying") {
+                constraints.maxLength = columnInfo.character_maximum_length;
             }
-        
             // Dependiendo del tipo de dato y la columna, establecer las restricciones
             switch (column_name) {
                 case 'alcalde':
-                    constraints.maxLength = columnInfo.character_maximum_length;
-                    constraints.minLength = 10;
+                    constraints.minLength = 4;
                     break;
+                case 'nombre':            
+                    constraints.minLength = 2;
+                    break;    
+                case 'area':
+                    constraints.min = 1;
+                    break;                                                                                     
             }
         
             return constraints;
-        }        
+        }      
+
+        async function defRange(column_name) {
+            switch (column_name) {
+                case 'departamentoNombre':
+                    const departamentos = await prisma.departamento.findMany({
+                        select: { nombre: true },
+                        orderBy: {
+                            nombre: 'asc'
+                        }
+                    });
+                    return departamentos.map(departamento => departamento.nombre);
+                default:
+                    return null;
+            }
+        }
 
         // Formatear la información de las columnas        
-        const headers = columnasInfo.reduce((acc, col) => {
+        const headers = {}
+        for (const col of columnasInfo) {
 
             const constraints = defPossibleValues(col.column_name, columnasInfo);
+            const possibleValues = await defRange(col.column_name);
 
-            acc[col.column_name] = {
+            headers[col.column_name] = {
                 type: col.data_type,
                 modifiable: columnasModificables.includes(col.column_name),
                 constraints: constraints,
-                possibleValues: null,
+                possibleValues: possibleValues,
                 isPrimaryKey: ids.includes(col.column_name),
                 choosableInCreate: !notChoosableInCreate.includes(col.column_name)                
             };
-            return acc;
-        }, {});    
+        };    
 
         //console.log(data)
         return NextResponse.json({headers,data,erasable:true})       
@@ -154,7 +164,7 @@ export async function POST (request, {params}){
             );
         }
 
-        const newRegister = await prisma.create.departamento({
+        const newRegister = await prisma.municipio.create({
             data: data
         })
 

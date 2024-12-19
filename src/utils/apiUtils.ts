@@ -35,7 +35,7 @@ export async function validateAllRegisters(
     
     var columnInRequest: {[key: string]: boolean} = {}; // Arreglo que verifica que estén todas las entradas
     
-    for (column in columnsInfo) {
+    for (const column in columnsInfo) {
         const colName = column.column_name;
         columnInRequest[String(colName)] = false;
     }
@@ -43,7 +43,7 @@ export async function validateAllRegisters(
     var allParameters: boolean = true;
     var missingParameters = []
     
-    for (attr in columnInRequest){
+    for (const attr in columnInRequest){
         if (attr in parameters) {
             columnInRequest[attr] = true;
             if (!exceptions.includes(attr)){
