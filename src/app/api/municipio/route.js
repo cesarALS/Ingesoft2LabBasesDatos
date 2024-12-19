@@ -3,6 +3,13 @@ import {prisma} from '@/libs/prisma'
 import JSONBig from 'json-bigint';
 import { Prisma } from '@prisma/client'
 
+import { getColumnsInfo, defaultConstraints, validateAllRegisters } from "@/utils/apiUtils";
+
+// Determinar cuáles columnas son modificables
+const columnasModificables = ['poblacion','alcalde'];
+const ids = ['id']
+const notChoosableInCreate = ['id']
+
 export async function GET(request, {params}) {
     try {
 
@@ -37,11 +44,6 @@ export async function GET(request, {params}) {
             ORDER BY ordinal_position;
         `
         ;
-        
-        // Determinar cuáles columnas son modificables
-        const columnasModificables = ['poblacion','alcalde'];
-        const ids = ['id']
-        const notChoosableInCreate = ['id']
 
         function defPossibleValues(column_name, colsInfo) {
             let constraints = {
@@ -93,9 +95,9 @@ export async function GET(request, {params}) {
     console.error('Error en el endpoint:', error);
     res.status(500).json({ error: 'Ocurrió un error al procesar la solicitud' });
     }    
-  }
+}
 
-  export async function PUT (request, {params}){
+export async function PUT (request, {params}){
          
       try {   
           
@@ -133,6 +135,46 @@ export async function GET(request, {params}) {
         );
       }
   } 
+
+export async function POST (request, {params}){
+    
+    try{
+        const {data} = await request.json();
+
+        const { allParameters, missingParameters } = await validateAllRegisters(
+            'Municipio',
+            data,
+            notChoosableInCreate
+        )
+
+        if (!allParameters){
+            return NextResponse.json(
+                { message: `Faltran atributos: ${missingParameters}` },
+                { status: 400},
+            );
+        }
+
+        const newRegister = await prisma.create.departamento({
+            data: data
+        })
+
+        return NextResponse.json({ message: "Municipio Creado"});
+    } catch (e){
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+            return NextResponse.json({
+                error: 'Datos inválidos',
+            }, { status: 400 }); // Respuesta 400: error del cliente            
+            /*
+            if (e.code === 'P2003') {}
+            */
+        } else {
+            return NextResponse.json({
+                error: 'Ocurrió un error inesperado al procesar la solicitud.',
+            }, { status: 500 }); // Respuesta 500: error del servidor            
+        }       
+    }
+
+}     
 
 export async function DELETE(request, {params}) {
     

@@ -3,6 +3,13 @@ import {prisma} from '@/libs/prisma'
 import { Prisma } from '@prisma/client'
 import JSONBig from 'json-bigint';
 
+import { getColumnsInfo, defaultConstraints, validateAllRegisters } from "@/utils/apiUtils";
+
+// Determinar cuáles columnas son modificables
+const columnasModificables = ['direccion','pisos'];
+const ids = ['id']
+const notChoosableInCreate = ['id'] // Para que no se envíe en el formulario
+
 export async function GET(request, {params}) {
     try {
 
@@ -38,11 +45,6 @@ export async function GET(request, {params}) {
             ORDER BY ordinal_position;
         `
         ;
-        
-        // Determinar cuáles columnas son modificables
-        const columnasModificables = ['direccion','pisos'];
-        const ids = ['id']
-        const notChoosableInCreate = ['id'] // Para que no se envíe en el formulario
 
         function defPossibleValues(column_name, colsInfo) {
             let constraints = {
@@ -137,22 +139,46 @@ export async function PUT (request, {params}){
     }
 }
 
-export async function POST(request, { params }){
-    try {
-        // Parsear el cuerpo de la solicitud
-        const { vivienda_id, direccion, propietario } = await request.json();
+export async function POST (request, {params}){
     
-        // Validación: asegurarse de que los datos necesarios estén presentes
-        if (!vivienda_id || !direccion || !propietario) {
-          return new Response(
-            JSON.stringify({ error: 'Todos los campos son obligatorios' }),
-            { status: 400 }
-          );
-        }
-    } catch (e){
+    try{
+        const {data} = await request.json();
 
+        const { allParameters, missingParameters } = await validateAllRegisters(
+            'Vivienda',
+            data,
+            notChoosableInCreate
+        )
+
+        if (!allParameters){
+            return NextResponse.json(
+                { message: `Faltran atributos: ${missingParameters}` },
+                { status: 400},
+            );
+        }
+
+        const newRegister = await prisma.create.departamento({
+            data: data
+        })
+
+        return NextResponse.json({ message: "Vivienda Creada"});
+    } catch (e){
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+            return NextResponse.json({
+                error: 'Datos inválidos',
+            }, { status: 400 }); // Respuesta 400: error del cliente            
+            /*
+            if (e.code === 'P2003') {}
+            */
+        } else {
+            return NextResponse.json({
+                error: 'Ocurrió un error inesperado al procesar la solicitud.',
+            }, { status: 500 }); // Respuesta 500: error del servidor            
+        }       
     }
-}
+
+}   
+
 
 export async function DELETE(request, { params }) {
     try {

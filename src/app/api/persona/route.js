@@ -3,6 +3,13 @@ import {prisma} from '@/libs/prisma'
 import { Prisma } from '@prisma/client'
 import JSONBig from 'json-bigint';
 
+import { getColumnsInfo, defaultConstraints, validateAllRegisters } from "@/utils/apiUtils";
+
+// Determinar cuáles columnas son modificables
+const columnasModificables = ['telefono','genero','vivienda_id'];
+const ids = ['id']
+const notChoosableInCreate = []
+
 export async function GET(request, {params}) {    
 
         /*const {searchParams} = new URL(request.url);
@@ -37,11 +44,6 @@ export async function GET(request, {params}) {
             ORDER BY ordinal_position;
         `
         ;
-        
-        // Determinar cuáles columnas son modificables
-        const columnasModificables = ['telefono','genero','vivienda_id'];
-        const ids = ['id']
-        const notChoosableInCreate = []
 
         function defPossibleValues(column_name, colsInfo) {
             let constraints = {
@@ -112,7 +114,7 @@ export async function GET(request, {params}) {
             status: 200,
         });      
      
-  }
+}
   
 export async function PUT (request, {params}){
        
@@ -152,7 +154,48 @@ export async function PUT (request, {params}){
       );
     }
 } 
-  
+ 
+export async function POST (request, {params}){
+    
+    try{
+        const {data} = await request.json();
+
+        const { allParameters, missingParameters } = await validateAllRegisters(
+            'Persona',
+            data,
+            notChoosableInCreate
+        )
+
+        if (!allParameters){
+            return NextResponse.json(
+                { message: `Faltran atributos: ${missingParameters}` },
+                { status: 400},
+            );
+        }
+
+        const newRegister = await prisma.create.departamento({
+            data: data
+        })
+
+        return NextResponse.json({ message: "Persona Creada"});
+    } catch (e){
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+            return NextResponse.json({
+                error: 'Datos inválidos',
+            }, { status: 400 }); // Respuesta 400: error del cliente            
+            /*
+            if (e.code === 'P2003') {}
+            */
+        } else {
+            return NextResponse.json({
+                error: 'Ocurrió un error inesperado al procesar la solicitud.',
+            }, { status: 500 }); // Respuesta 500: error del servidor            
+        }       
+    }
+
+}   
+
+
 export async function DELETE(request, {params}) {
     
     try {

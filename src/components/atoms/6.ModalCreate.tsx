@@ -5,7 +5,7 @@ import { TableHeaders, DataEntry } from "@/types/types";
 
 interface ModalCreateProps {
     headers: TableHeaders
-    confirmAction: (() => void) | {} | (() => void)
+    confirmAction: ((data: {}) => Promise<void>)
     cancelAction: (() => void) | {} | (() => void) 
 }
 
@@ -41,7 +41,13 @@ export default function ModalCreate(
 
     const onSubmit = () => {
         console.log(formik.values)
-        // Aquí iría la confirm option, que no haría otra cosa que enviar la solicitud a la BD de update
+        const data = formik.values
+        for (let key in data) {
+            if(getFormType(headers[key].type) === "number"){
+                data[key] = parseInt(String(data[key]), 10)
+            }
+        }
+        confirmAction(data);        
     }    
 
     const formik = useFormik({

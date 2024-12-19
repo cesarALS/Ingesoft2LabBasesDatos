@@ -80,12 +80,6 @@ export async function deleteRow(entryId: string|number, tableName: string): Prom
 
 export async function updateRow(id: string, data: {}, tableName: string){
   
-  console.log("id")
-  console.log(id)
-  console.log("data")
-  console.log(data)
-
-  
   try{
     const response = await fetch(`/api/${tableName}`, {
         method: 'PUT',
@@ -107,8 +101,6 @@ export async function updateRow(id: string, data: {}, tableName: string){
         message: responseData.message
       }
     } else {
-      console.log("Aqui")
-      console.log(response)
       return {
         status: response.status,
         message: responseData.error
@@ -122,4 +114,41 @@ export async function updateRow(id: string, data: {}, tableName: string){
     }    
   }
 
+}
+
+export async function createRow(data: {}, tableName: string){
+  
+  console.log(tableName)
+  
+  try{
+    const response = await fetch(`/api/${tableName}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },      
+      body: JSON.stringify({
+        data: data
+      }),
+    }) ;
+
+    const responseData = await response.json();
+
+    console.log(response)
+    if (response.ok) {
+      
+      return {
+        status: response.status,
+        message: responseData.message
+      }
+    } else {
+      return {
+        status: response.status,
+        message: responseData.error
+      }
+    }
+  } catch (e){
+    console.log(e)
+    return {
+      status: 500,
+      message: `Problema al hacer la solicitud. Vuelve a intentarlo`      
+    }
+  }
 }

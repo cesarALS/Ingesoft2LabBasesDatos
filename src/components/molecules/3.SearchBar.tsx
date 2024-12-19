@@ -3,24 +3,60 @@ import { MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/24/solid"
 import { toUpperCaseFirst } from "@/utils/stringUtils";
 import { Modal } from "./5.Modal";
 import ModalCreate from "@/components/atoms/6.ModalCreate"
+import ModalContentMessage from "../atoms/3.ModalContentMessage";
 import { TableHeaders } from "@/types/types"
+import { createRow } from "@/services/requestFunctions";
 
 
 interface SearchBarProps {
   headers: TableHeaders;
-  erasable: boolean
+  erasable: boolean;
+  loadingState: Function;
+  tableName: string;
+  reloadTable: React.Dispatch<React.SetStateAction<number>>
 }
 
-export default function SearchBar({ headers, erasable }: SearchBarProps) {
+export default function SearchBar({ headers, erasable, loadingState, tableName, reloadTable }: SearchBarProps) {
   
   const [showModal, setShowModal] = useState<boolean>(false)
+  const [creatingRegister, setCreatingRegister] = useState<boolean>(false)
+  const [modalMessage, setModalMessage] = useState<{
+    on: boolean, 
+    message: string,
+    success: boolean
+  }>({on: false, message: "", success: false})   
 
-  const handleUpdate = () => {
+  const handleCreate = () => {
     setShowModal(true);
+    setCreatingRegister(true);
+  }
+
+  const confirmCreate = async (data: {
+    [key: string]: string | number | readonly string[] | undefined;
+}) => {
+    const createData = async () => {
+      
+      loadingState({on: true, message: "Creando"});
+      const res = await createRow(data, tableName);
+      loadingState({on: false, message: ""});    
+      
+      setCreatingRegister(false); 
+
+      if (res.status === 200 || res.status === 202 || res.status === 204){        
+        setModalMessage({on: true, message: `Éxito: ${res.message}`, success: true})
+      } else { 
+        setModalMessage({on: true, message: `Error: ${res.message}`, success: false})
+      }
+      
+    }
+      
+    await createData();
   }
 
   const cancel = () => {
     setShowModal(false)
+    setCreatingRegister(false)
+    setModalMessage({on: false, message: "", success: false})
   }
   
   return (
@@ -60,7 +96,7 @@ export default function SearchBar({ headers, erasable }: SearchBarProps) {
               type="button"
               className="flex items-center rounded-r-lg bg-green-500 px-3 py-2 text-white hover:bg-green-600 "
               title = "Añadir un nuevo registro"
-              onClick={handleUpdate}
+              onClick={handleCreate}
             >
               <PlusIcon className="h-5 w-5" />
               <span className="sr-only">Add Entry</span> {/* For accessibility */}
@@ -81,16 +117,26 @@ export default function SearchBar({ headers, erasable }: SearchBarProps) {
         }
 
       </div>
-      {showModal && (
+      {showModal && creatingRegister && (
         <Modal
         son = {
           <ModalCreate
           cancelAction={cancel}   
           headers={headers}    
-          confirmAction={()=>{}}   
+          confirmAction={confirmCreate}   
           />
         }
         />
+      )}
+      {showModal && modalMessage.on && (
+        <Modal son ={
+          <ModalContentMessage
+          title = "Resultado" 
+          message = {modalMessage.message} 
+          success = {modalMessage.success}
+          acceptHandle = {() => {cancel(); reloadTable((prev) => prev + 1);}}
+          />
+        }/>
       )}
     </>  
   );

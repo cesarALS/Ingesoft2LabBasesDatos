@@ -44,7 +44,14 @@ export default function SearchView() {
         <SelectorBar botones={tableNames} clickFunction={setTableName} activeTable={tableName}/>
         <div className="max-w relative z-30 w-full bg-white shadow-lg">
           <div className="flex justify-center px-3 pt-3">
-            <SearchBar headers={tableData.headers} erasable={tableData.erasable} />
+            <SearchBar 
+            headers={tableData.headers} 
+            erasable={tableData.erasable} 
+            loadingState={setLoading}
+            tableName={tableName}
+            reloadTable={reloadTable}
+            />
+            
           </div>
           <div className="p-4">
             <ResultsTable 

@@ -3,6 +3,12 @@ import {prisma} from '@/libs/prisma'
 import JSONBig from 'json-bigint';
 import { Prisma } from '@prisma/client'
 
+import { getColumnsInfo, defaultConstraints, validateAllRegisters } from "@/utils/apiUtils";
+
+const columnasModificables = ['poblacion','gobernador'];
+const ids = ['nombre'];
+const notChoosableInCreate = []
+
 export async function GET(request, {params}) {
     try {
 
@@ -22,43 +28,24 @@ export async function GET(request, {params}) {
             where: filters
         });
 
-        // Consulta de nombres y tipos de columnas
-        const columnasInfo = await prisma.$queryRaw
-        `
-            SELECT column_name, data_type, character_maximum_length, numeric_precision
-            FROM information_schema.columns
-            WHERE table_name = 'Departamento'
-            ORDER BY ordinal_position;
-        `
-        ;
+        const columnasInfo = await getColumnsInfo('Departamento');
         
         // Determinar cuáles columnas son modificables
-        const columnasModificables = ['poblacion','gobernador'];
-        const ids = ['nombre'];
-        const notChoosableInCreate = []
+
 
         function defPossibleValues(column_name, colsInfo) {
-            let constraints = {
-                minLength: 0,
-                maxLength: 100,
-                min: 0,
-                max: 999999999999,
-                pattern: ".*",
-            };
+            let constraints = Object.assign({}, defaultConstraints);
         
             // Obtener información de la columna correspondiente
             const columnInfo = colsInfo.find(col => col.column_name === column_name);
-        
-            if (!columnInfo || !columnasModificables.includes(column_name)) {
-                return null; // Si no es modificable, no definimos constraints
-            }
         
             // Dependiendo del tipo de dato y la columna, establecer las restricciones
             switch (column_name) {
                 case 'gobernador':
                     constraints.maxLength = columnInfo.character_maximum_length;
-                    constraints.minLength = 10;
                     break;
+                case 'nombre':
+                    constraints.maxLength = columnInfo.character_maximum_length;                    
             }
         
             return constraints;
@@ -66,6 +53,7 @@ export async function GET(request, {params}) {
         
         // Formatear la información de las columnas
         const headers = columnasInfo.reduce((acc, col) => {
+            
             const constraints = defPossibleValues(col.column_name, columnasInfo);
             
             acc[col.column_name] = {
@@ -126,6 +114,46 @@ export async function PUT (request, {params}){
     }
 } 
 
+export async function POST (request, {params}){
+    
+    try{
+        const {data} = await request.json();
+
+        const { allParameters, missingParameters } = await validateAllRegisters(
+            'Departamento',
+            data,
+            notChoosableInCreate
+        )
+
+        if (!allParameters){
+            return NextResponse.json(
+                { message: `Faltran atributos: ${missingParameters}` },
+                { status: 400},
+            );
+        }
+
+        const newRegister = await prisma.create.departamento({
+            data: data
+        })
+
+        return NextResponse.json({ message: "Departamento Creado"});
+    } catch (e){
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+            return NextResponse.json({
+                error: 'Datos inválidos',
+            }, { status: 400 }); // Respuesta 400: error del cliente            
+            /*
+            if (e.code === 'P2003') {}
+            */
+        } else {
+            return NextResponse.json({
+                error: 'Ocurrió un error inesperado al procesar la solicitud.',
+            }, { status: 500 }); // Respuesta 500: error del servidor            
+        }       
+    }
+
+}   
+
 export async function DELETE(request, {params}) {
     
     try {
@@ -148,9 +176,7 @@ export async function DELETE(request, {params}) {
                 error: 'Otras referencias dependen del departamento',
             }, { status: 400 }); // Respuesta 400: error del cliente            
             /*
-            if (e.code === 'P2003') {
-
-            }
+            if (e.code === 'P2003') {}
             */
         }
 
