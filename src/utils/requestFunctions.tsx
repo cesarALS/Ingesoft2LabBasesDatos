@@ -69,7 +69,7 @@ export async function deleteRow(entryId: string|number, tableName: string): Prom
     }
   } catch(error){
     // Esta sección se ejecuta si hay un error en la solicitud al endpoint
-    //console.log("Error al hacer la solicitud al Endpoint!!! ", error.message);
+    console.log("Error al hacer la solicitud al Endpoint!!! ", error as string);
     return {
         status: 500,
         message: `Problema al hacer la solicitud. Vuelve a intentarlo`
@@ -78,7 +78,7 @@ export async function deleteRow(entryId: string|number, tableName: string): Prom
 
 };
 
-export async function updateRow(id: string, data: {}, tableName: string){
+export async function updateRow(id: string, data: object, tableName: string){
   
   try{
     const response = await fetch(`/api/${tableName}`, {
@@ -116,7 +116,7 @@ export async function updateRow(id: string, data: {}, tableName: string){
 
 }
 
-export async function createRow(data: {}, tableName: string){
+export async function createRow(data: object, tableName: string){
   
   console.log(tableName)
   

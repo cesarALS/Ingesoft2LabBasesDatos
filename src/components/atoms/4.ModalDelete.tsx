@@ -1,42 +1,45 @@
 
 import { TableHeaders, DataEntry } from "@/types/types"
+import { getFormType } from "@/utils/BDUtils";
 import { toUpperCaseFirst } from "@/utils/stringUtils"
 import React from "react"
 
 interface ModalDeleteProps {
     headers: TableHeaders,
     entry: DataEntry,
-    confirmAction: (() => void) | {} | (() => void)
-    cancelAction: (() => void) | {} | (() => void)
+    confirmAction: () => void,
+    cancelAction: () => void,
 };
 
 export default function ModalDelete (
     {headers, entry, confirmAction, cancelAction} : ModalDeleteProps
 ){
 
-    const headerKeys = Object.keys(headers);
+    const columns = Object.keys(headers);
+
     return (
         <>
             <h2 className="text-xl font-bold mb-4 text-center">
-                {"¿Estás seguro de borrar este registro?"}
+                ¿Estás seguro de borrar este registro?
             </h2>              
             <table>
                 <thead>
                     <tr>
-                        {headerKeys.map((key, index) => (
-                        <th key={index} className="border-b px-4 py-2 bg-gray-300 text-center border-2">
-                            {toUpperCaseFirst(key)}
-                        </th>
+                        {columns.map(col => (
+                            <th 
+                                key={col} 
+                                className="border-b px-4 py-2 bg-gray-300 text-center border-2"
+                            >
+                                {toUpperCaseFirst(col)}
+                            </th>
                         ))}
                     </tr>
                 </thead>      
                 <tbody>
                 <tr key="unique-entry" className="border-b">
-                    {headerKeys.map((key) => (
-                    <td key={key} className="text-center px-4 py-2">
-                        {headers[key].type === "date"
-                        ? new Date(entry[key]).toLocaleDateString()
-                        : entry[key]}
+                    {columns.map(col => (
+                    <td key={col} className="text-center px-4 py-2">                        
+                        {getFormType(headers[col].type).transform(entry[col])}
                     </td>
                     ))}
                 </tr>                        

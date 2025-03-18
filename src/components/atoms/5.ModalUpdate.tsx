@@ -6,61 +6,44 @@ import { getFormType } from "@/utils/BDUtils"
 interface ModalUpdateProps {
     headers: TableHeaders
     entry: DataEntry,
-    confirmAction: (id: string, bod: {}) => Promise<void>
-    cancelAction: (() => void) | {} | (() => void)    
+    confirmAction: (id: string, bod: object) => Promise<void>,
+    cancelAction: () => void,  
 }
 
 export default function ModalUpdate(
     { headers, entry, confirmAction, cancelAction } : ModalUpdateProps
 ){
-    
-    // Si da el tiempo, se pueden añadir tipos de Date
-    var initVals: {[key: string]: string|number|readonly string[] | undefined} = {};
+        
+    const initialValues: {[key: string]: string | number | readonly string[] | undefined} = {};
     
     Object.keys(entry).forEach(attr => {
-        if (headers[attr].modifiable) {
-            if (!headers[attr].possibleValues){
-                switch (getFormType(headers[attr].type)){
-                    case "text":
-                        initVals[String(attr)] = "";
-                        break;
-                    case "number":
-                        initVals[String(attr)] = 0;
-                        break;
-                    case "date":
-                        initVals[String(attr)] = "";
-                        break;
-                    default:
-                        initVals[String(attr)] = "";                        
-                }
-            } else {
-                initVals[String(attr)] = headers[attr].possibleValues[0]
-            }
-            
-        }
-    })
+        const column = headers[attr];
 
-    const onSubmit = () => {
-        console.log(formik.values)
-        var pk = "";
-        Object.keys(entry).forEach(attr =>{
-            if (headers[attr].isPrimaryKey) pk = entry[attr];
-        })
-        const data = formik.values
-        for (let key in data) {
-            if(getFormType(headers[key].type) === "number"){
-                data[key] = parseInt(String(data[key]), 10)
-            }
+        if (column.modifiable) {
+            if (!column.possibleValues) initialValues[attr] = getFormType(column.type).defaultValue;
+            else initialValues[attr] = column.possibleValues[0];            
         }
-        confirmAction(pk, data);
-        // Aquí iría la confirm option, que no haría otra cosa que enviar la solicitud a la BD de update
+    });
+
+    const onSubmit = () => {        
+        let pk = "";
+        
+        const data = formik.values;                
+
+        for (const attr in data) {
+            const column = headers[attr];
+            
+            if (column.isPrimaryKey) pk = entry[attr] as string;
+            
+            if(getFormType(column.type).jsType === "number"){
+                data[attr] = parseInt(String(data[attr]), 10);
+            }
+        };
+
+        confirmAction(pk, data);        
     }
     
-
-    const formik = useFormik({
-        initialValues: initVals,
-        onSubmit
-    })
+    const formik = useFormik({initialValues, onSubmit});
 
     return (
         <>
@@ -70,51 +53,46 @@ export default function ModalUpdate(
             <form onSubmit={formik.handleSubmit}>
                 <div className="grid gap-7">
                     <div className="grid rounded-md">
-                        {Object.keys(headers).map((attr) => (
+                        {Object.entries(headers).map(([col, column]) => (
                         <div
-                            key={attr}
+                            key={col}
                             className="grid grid-cols-2 items-center hover:bg-gray-100"
                         >
                             <div className="flex border-2 h-[100%] items-center justify-center p-2">
-                                <p className="font-bold text-center">{toUpperCaseFirst(attr)}</p>
+                                <p className="font-bold text-center">{toUpperCaseFirst(col)}</p>
                             </div>
                             <div className="flex border-2 h-[100%] items-center justify-center p-2">                    
                             {
-                                !headers[attr].modifiable ? (
-                                    <p className="text-center"> 
-                                        {!(headers[attr].type === "date") ? (
-                                            entry[attr]
-                                        ) : (
-                                            new Date(entry[attr]).toISOString().split("T")[0]
-                                        )                                        
-                                        } 
+                                !column.modifiable ? (
+                                    <p className="text-center">                                         
+                                        {getFormType(column.type).transform(entry[col])}
                                     </p>   
                                 ) : (
-                                    !headers[attr].possibleValues ? (
+                                    !column.possibleValues ? (
                                         <input
-                                        className="text-center rounded-md border-[0.1em]"
-                                        type={getFormType(headers[attr].type)}
-                                        id={attr}
-                                        placeholder={String(entry[attr])}
-                                        minLength={headers[attr].constraints?.minLength}
-                                        maxLength={headers[attr].constraints?.maxLength}
-                                        min={headers[attr].constraints?.min}
-                                        max={headers[attr].constraints?.max}                            
-                                        pattern={headers[attr].constraints?.pattern}
-                                        value={formik.values[attr]}
-                                        onChange={formik.handleChange}
-                                        required={true}
+                                            className="text-center rounded-md border-[0.1em]"
+                                            type={getFormType(column.type).jsType}
+                                            id={col}
+                                            placeholder={String(entry[col])}
+                                            minLength={column.constraints?.minLength}
+                                            maxLength={column.constraints?.maxLength}
+                                            min={column.constraints?.min}
+                                            max={column.constraints?.max}                            
+                                            pattern={column.constraints?.pattern}
+                                            value={formik.values[col]}
+                                            onChange={formik.handleChange}
+                                            required={true}
                                         />
                                     ) : (
                                         <select
-                                        id={attr}
-                                        className="text-center rounded-md border-[0.1em]"
-                                        value={formik.values[attr]}
-                                        onChange={formik.handleChange}  
-                                        itemType=""                              
+                                            id={col}
+                                            className="text-center rounded-md border-[0.1em]"
+                                            value={formik.values[col]}
+                                            onChange={formik.handleChange}  
+                                            itemType=""                              
                                         >
                                             {
-                                                headers[attr].possibleValues.map((valueInRange) => (
+                                                column.possibleValues.map((valueInRange) => (
                                                     <option 
                                                     key={valueInRange} 
                                                     value={valueInRange}
