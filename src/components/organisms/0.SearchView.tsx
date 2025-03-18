@@ -1,68 +1,36 @@
 "use client"
 
-import React, { useEffect, useState } from "react";
 import SelectorBar from "../molecules/2.SelectorBar";
 import SearchBar from "../molecules/3.SearchBar";
 import ResultsTable from "../molecules/4.ResultsTable";
 import LoadingWheel from "../atoms/1.LoadingWheel";
-import { getTable } from "@/services/requestFunctions";
-import { Table } from "@/types/types"
+import { useTableManagementStore } from "@/utils/TableStore";
+import { useEffect } from "react";
 
-const tableNames = ["departamento", "municipio", "vivienda", "persona",];
+const SearchView = () => {
 
-// El SearchView es la suma de la barra de búsqueda
-export default function SearchView() {
-  const defaultTable: Table = {
-    headers: {},
-    data: [],
-    erasable: true,
-  };
-  
-  const [tableName, setTableName] = useState<string>(tableNames[0]);
-  const [tableReload, reloadTable] = useState<number>(0);
-  const [tableData, setTableData] = useState<Table>(defaultTable);
-  const [isLoading, setLoading] = useState<{on: boolean, message: string}>({on: false, message: ""})
+  const { loadingState, tableNames, setTable } = useTableManagementStore();
 
-  // Hacer la búsqueda a la BD ahora que se cambió de pestaña
   useEffect(() => {
-
-    const fetchData = async () => {
-      setLoading({on: true, message: "Cargando"});    
-      const t = await getTable(tableName);
-      setTableData(t);
-      setLoading({on: false, message: ""});      
-    }
+    setTable(tableNames[0]);
+  }, []);
     
-    fetchData();
-    console.log(tableData)
-
-  }, [tableName, tableReload] )
-
   return (
     <>
       <div className="h-[63vh]">
-        <SelectorBar botones={tableNames} clickFunction={setTableName} activeTable={tableName}/>
+        <SelectorBar/>
         <div className="max-w relative z-30 w-full bg-white shadow-lg">
           <div className="flex justify-center px-3 pt-3">
-            <SearchBar 
-            headers={tableData.headers} 
-            erasable={tableData.erasable} 
-            loadingState={setLoading}
-            tableName={tableName}
-            reloadTable={reloadTable}
-            />
-            
+            <SearchBar/>
           </div>
           <div className="p-4">
-            <ResultsTable 
-            tableData={tableData} 
-            tableName={tableName} 
-            loadingState={setLoading}
-            reloadTable={reloadTable}/>
+            <ResultsTable/>
           </div>
         </div>
-      </div>
-      {isLoading.on && <LoadingWheel waitMessage={isLoading.message}/>}
+      </div>      
+      {loadingState.isLoading && <LoadingWheel waitMessage={loadingState.loadingMessage}/>}
     </>
   );
-}
+};
+
+export default SearchView;

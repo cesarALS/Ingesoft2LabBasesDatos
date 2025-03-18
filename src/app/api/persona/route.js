@@ -10,7 +10,7 @@ const columnasModificables = ['telefono','genero','vivienda_id','nombre'];
 const ids = ['id']
 const notChoosableInCreate = []
 
-export async function GET(request, {params}) {    
+export async function GET() {    
 
         /*const {searchParams} = new URL(request.url);
         const id = searchParams.get('id')
@@ -111,7 +111,7 @@ export async function GET(request, {params}) {
      
 }
   
-export async function PUT (request, {params}){
+export async function PUT (request){
        
     try {   
         
@@ -126,7 +126,7 @@ export async function PUT (request, {params}){
         }
 
       // Actualizar el registro en la base de datos
-      const updatedPersona = await prisma.persona.update({
+      await prisma.persona.update({
         where: { id: id }, // Identifica el registro
         data, // Datos para actualizar
       });
@@ -150,7 +150,7 @@ export async function PUT (request, {params}){
     }
 } 
  
-export async function POST (request, {params}){
+export async function POST (request){
     
     try{
         const {data} = await request.json();
@@ -170,7 +170,7 @@ export async function POST (request, {params}){
 
         data.fecha_nacimiento = new Date(data.fecha_nacimiento).toISOString();
 
-        const newRegister = await prisma.persona.create({
+        await prisma.persona.create({
             data: data
         })
 
@@ -193,14 +193,14 @@ export async function POST (request, {params}){
 }   
 
 
-export async function DELETE(request, {params}) {
+export async function DELETE(request) {
     
     try {
         const {searchParams} = new URL(request.url);
         const id = searchParams.get('id');
 
         // Intentamos eliminar la persona
-        const personaEliminada = await prisma.persona.delete({
+        await prisma.persona.delete({
             where: {
                 id: Number(id)
             }

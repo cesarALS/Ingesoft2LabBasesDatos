@@ -3,12 +3,18 @@
 import {prisma} from '@/libs/prisma'
 import { toUpperCaseFirst } from './stringUtils';
 
+interface ColumnInfo {
+    column_name: string,
+    data_type: string,
+    character_maximum_length: number | null,
+    numeric_precision: null | number,
+}
 
-export async function getColumnsInfo(tableName: string){
+export async function getColumnsInfo(tableName: string): Promise<ColumnInfo[]>{
     
     const upperTableName = toUpperCaseFirst(tableName)
     
-    const columnasInfo = await prisma.$queryRaw
+    const columnasInfo = await prisma.$queryRaw<ColumnInfo[]>
     `
         SELECT column_name, data_type, character_maximum_length, numeric_precision
         FROM information_schema.columns
@@ -16,7 +22,8 @@ export async function getColumnsInfo(tableName: string){
         ORDER BY ordinal_position;
     `
     ;
-
+    
+    console.log(columnasInfo);
     return columnasInfo;
 }
 
@@ -27,21 +34,21 @@ interface ResponseValidateAllRegisters {
 
 export async function validateAllRegisters(
     tableName: string, 
-    parameters: {}, 
+    parameters: object, 
     exceptions: string[]
 ) : Promise <ResponseValidateAllRegisters>{
         
     const columnsInfo = await getColumnsInfo(tableName);
     
-    var columnInRequest: {[key: string]: boolean} = {}; // Arreglo que verifica que estén todas las entradas
+    const columnInRequest: {[key: string]: boolean} = {}; // Arreglo que verifica que estén todas las entradas
     
-    for (const column in columnsInfo) {
-        const colName = column.column_name;
+    for (const column of columnsInfo) {
+        const colName: string = column.column_name;
         columnInRequest[String(colName)] = false;
     }
     
-    var allParameters: boolean = true;
-    var missingParameters = []
+    let allParameters = true;
+    const missingParameters = []
     
     for (const attr in columnInRequest){
         if (attr in parameters) {

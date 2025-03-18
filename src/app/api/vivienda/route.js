@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server"
 import {prisma} from '@/libs/prisma'
 import { Prisma } from '@prisma/client'
-import JSONBig from 'json-bigint';
 
 import { getColumnsInfo, defaultConstraints, validateAllRegisters } from "@/utils/apiUtils";
 
@@ -10,7 +9,7 @@ const columnasModificables = ['direccion','pisos'];
 const ids = ['id']
 const notChoosableInCreate = ['id'] // Para que no se envíe en el formulario
 
-export async function GET(request, {params}) {
+export async function GET() {
     try {
 
         /*const {searchParams} = new URL(request.url);
@@ -110,7 +109,7 @@ export async function GET(request, {params}) {
     }    
 }
 
-export async function PUT (request, {params}){
+export async function PUT (request){
        
     try {   
         
@@ -125,7 +124,7 @@ export async function PUT (request, {params}){
         }
 
       // Actualizar el registro en la base de datos
-      const updatedPersona = await prisma.vivienda.update({
+      await prisma.vivienda.update({
         where: { id: id }, // Identifica el registro
         data, // Datos para actualizar
       });
@@ -149,7 +148,7 @@ export async function PUT (request, {params}){
     }
 }
 
-export async function POST (request, {params}){
+export async function POST (request){
     
     try{
         const {data} = await request.json();
@@ -167,7 +166,7 @@ export async function POST (request, {params}){
             );
         }
 
-        const newRegister = await prisma.vivienda.create({
+        await prisma.vivienda.create({
             data: data
         })
 
@@ -190,12 +189,12 @@ export async function POST (request, {params}){
 }   
 
 
-export async function DELETE(request, { params }) {
+export async function DELETE(request) {
     try {
         const { searchParams } = new URL(request.url);
         const id = searchParams.get('id');
 
-        const viviendaEliminada = await prisma.vivienda.delete({
+        await prisma.vivienda.delete({
             where: {
                 id: Number(id),
             },

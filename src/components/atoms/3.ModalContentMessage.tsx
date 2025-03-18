@@ -4,7 +4,7 @@ import { FaTimesCircle } from 'react-icons/fa'; // Importar ícono de cruz (erro
 interface ModalContentMessageProps {
     title: string,
     message: string,
-    acceptHandle: Function,
+    acceptHandle: () => void,
     success: boolean
 }
 

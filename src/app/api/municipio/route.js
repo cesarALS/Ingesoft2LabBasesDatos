@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server"
 import {prisma} from '@/libs/prisma'
-import JSONBig from 'json-bigint';
 import { Prisma } from '@prisma/client'
 
 import { getColumnsInfo, defaultConstraints, validateAllRegisters } from "@/utils/apiUtils";
@@ -10,7 +9,7 @@ const columnasModificables = ['poblacion','alcalde'];
 const ids = ['id']
 const notChoosableInCreate = ['id']
 
-export async function GET(request, {params}) {
+export async function GET(request) {
     try {
 
         const {searchParams} = new URL(request.url);
@@ -107,7 +106,7 @@ export async function GET(request, {params}) {
     }    
 }
 
-export async function PUT (request, {params}){
+export async function PUT (request){
          
       try {   
           
@@ -122,7 +121,7 @@ export async function PUT (request, {params}){
           }
   
         // Actualizar el registro en la base de datos
-        const updatedMunicipio = await prisma.municipio.update({
+        await prisma.municipio.update({
           where: { id: id }, // Identifica el registro
           data, // Datos para actualizar
         });
@@ -146,7 +145,7 @@ export async function PUT (request, {params}){
       }
   } 
 
-export async function POST (request, {params}){
+export async function POST (request){
     
     try{
         const {data} = await request.json();
@@ -164,7 +163,7 @@ export async function POST (request, {params}){
             );
         }
 
-        const newRegister = await prisma.municipio.create({
+        await prisma.municipio.create({
             data: data
         })
 
@@ -186,14 +185,14 @@ export async function POST (request, {params}){
 
 }     
 
-export async function DELETE(request, {params}) {
+export async function DELETE(request) {
     
     try {
         const {searchParams} = new URL(request.url);
         const id = searchParams.get('id');
 
         // Intentamos eliminar el municipio
-        const departamentoEliminado = await prisma.municipio.delete({
+        await prisma.municipio.delete({
             where: {
                 id: Number(id)
             }

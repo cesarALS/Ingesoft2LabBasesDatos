@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server"
-import {prisma} from '@/libs/prisma'
-import JSONBig from 'json-bigint';
+import { prisma } from '@/libs/prisma'
 import { Prisma } from '@prisma/client'
 
 import { getColumnsInfo, defaultConstraints, validateAllRegisters } from "@/utils/apiUtils";
@@ -9,7 +8,7 @@ const columnasModificables = ['poblacion','gobernador'];
 const ids = ['nombre'];
 const notChoosableInCreate = []
 
-export async function GET(request, {params}) {
+export async function GET(request) {
     try {
 
         const {searchParams} = new URL(request.url);
@@ -86,7 +85,7 @@ export async function GET(request, {params}) {
     }    
 }
 
-export async function PUT (request, {params}){
+export async function PUT (request){
        
     try {   
         
@@ -101,7 +100,7 @@ export async function PUT (request, {params}){
         }
 
       // Actualizar el registro en la base de datos
-      const updatedDepartamento = await prisma.departamento.update({
+      await prisma.departamento.update({
         where: { nombre: id }, // Identifica el registro
         data, // Datos para actualizar
       });
@@ -125,7 +124,7 @@ export async function PUT (request, {params}){
     }
 } 
 
-export async function POST (request, {params}){
+export async function POST (request){
     
     try{
         const {data} = await request.json();
@@ -147,7 +146,7 @@ export async function POST (request, {params}){
             );
         }
 
-        const newRegister = await prisma.departamento.create({
+        await prisma.departamento.create({
             data: data
         })
 
@@ -170,14 +169,14 @@ export async function POST (request, {params}){
 
 }   
 
-export async function DELETE(request, {params}) {
+export async function DELETE(request) {
     
     try {
         const {searchParams} = new URL(request.url);
         const id = searchParams.get('id');
 
         // Intentamos eliminar el departamento
-        const departamentoEliminado = await prisma.departamento.delete({
+        await prisma.departamento.delete({
             where: {
                 nombre: String(id)
             }

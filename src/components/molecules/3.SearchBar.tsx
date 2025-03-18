@@ -1,30 +1,19 @@
 import React, { useState } from "react";
 import { MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/24/solid"
 import { toUpperCaseFirst } from "@/utils/stringUtils";
-import { Modal } from "./5.Modal";
+import Modal from "./5.Modal";
 import ModalCreate from "@/components/atoms/6.ModalCreate"
 import ModalContentMessage from "../atoms/3.ModalContentMessage";
-import { TableHeaders } from "@/types/types"
-import { createRow } from "@/services/requestFunctions";
+import { createRow } from "@/utils/requestFunctions";
+import { useTableManagementStore } from "@/utils/TableStore";
+import { TableHeaders } from "@/types/types";
 
-
-interface SearchBarProps {
-  headers: TableHeaders;
-  erasable: boolean;
-  loadingState: Function;
-  tableName: string;
-  reloadTable: React.Dispatch<React.SetStateAction<number>>
-}
-
-export default function SearchBar({ headers, erasable, loadingState, tableName, reloadTable }: SearchBarProps) {
+export default function SearchBar() {
+  
+  const { table, setLoadingState, reloadTable, modal, setModal } = useTableManagementStore();
   
   const [showModal, setShowModal] = useState<boolean>(false)
-  const [creatingRegister, setCreatingRegister] = useState<boolean>(false)
-  const [modalMessage, setModalMessage] = useState<{
-    on: boolean, 
-    message: string,
-    success: boolean
-  }>({on: false, message: "", success: false})   
+  const [creatingRegister, setCreatingRegister] = useState<boolean>(false);
 
   const handleCreate = () => {
     setShowModal(true);
@@ -33,30 +22,24 @@ export default function SearchBar({ headers, erasable, loadingState, tableName, 
 
   const confirmCreate = async (data: {
     [key: string]: string | number | readonly string[] | undefined;
-}) => {
-    const createData = async () => {
+}) => {    
       
-      loadingState({on: true, message: "Creando"});
-      const res = await createRow(data, tableName);
-      loadingState({on: false, message: ""});    
+    setLoadingState(true, "Creando");
+    const res = await createRow(data, table.tableName);
+    setLoadingState(false);    
       
-      setCreatingRegister(false); 
+    setCreatingRegister(false); 
 
-      if (res.status === 200 || res.status === 202 || res.status === 204){        
-        setModalMessage({on: true, message: `Éxito: ${res.message}`, success: true})
-      } else { 
-        setModalMessage({on: true, message: `Error: ${res.message}`, success: false})
-      }
-      
-    }
-      
-    await createData();
+    if (res.status === 200 || res.status === 202 || res.status === 204){        
+      setModal(true, `Éxito: ${res.message}`, true);
+    } else setModal(true, `Error: ${res.message}`, false);
+            
   }
 
   const cancel = () => {
     setShowModal(false)
     setCreatingRegister(false)
-    setModalMessage({on: false, message: "", success: false})
+    setModal(false);
   }
   
   return (
@@ -74,14 +57,14 @@ export default function SearchBar({ headers, erasable, loadingState, tableName, 
 
         {/* Dropdown List */}
         <select className="mx-2 rounded-lg bg-white px-2 py-1 text-gray-700 outline-none hover:bg-gray-100 ">
-          {Object.entries(headers).map(([key, entry]) => (
+          {Object.entries(table.headers).map(([key]) => (
             <option key={key} value={key}>
               {toUpperCaseFirst(key)}
             </option>
           ))}        
         </select>
 
-        { erasable ? (          
+        { table.erasable ? (          
           <>
             <button
               type="button"
@@ -118,25 +101,26 @@ export default function SearchBar({ headers, erasable, loadingState, tableName, 
 
       </div>
       {showModal && creatingRegister && (
-        <Modal
-        son = {
+        <Modal>
           <ModalCreate
           cancelAction={cancel}   
-          headers={headers}    
+          headers={table.headers as TableHeaders}    
           confirmAction={confirmCreate}   
-          />
-        }
-        />
+          />        
+        </Modal>
       )}
-      {showModal && modalMessage.on && (
-        <Modal son ={
+      {modal.isOpen && (
+        <Modal>
           <ModalContentMessage
           title = "Resultado" 
-          message = {modalMessage.message} 
-          success = {modalMessage.success}
-          acceptHandle = {() => {cancel(); reloadTable((prev) => prev + 1);}}
+          message = {modal.message as string} 
+          success = {modal.success as boolean}
+          acceptHandle = {() => {
+            cancel(); 
+            reloadTable();
+          }}
           />
-        }/>
+        </Modal>
       )}
     </>  
   );

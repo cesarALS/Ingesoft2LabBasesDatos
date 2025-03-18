@@ -21,12 +21,13 @@ export interface TableHeaders {
   
 // Definición para cada registro de una tabla
 export type DataEntry = {
-  [key: string | number]: string | number;
+  id: string | number,
+  [key: string]: string | number;
 };
   
 // Una tabla
 export interface Table {
-  headers: TableHeaders;
+  headers: TableHeaders | object ;
   data: DataEntry[];
   erasable: boolean;
 }

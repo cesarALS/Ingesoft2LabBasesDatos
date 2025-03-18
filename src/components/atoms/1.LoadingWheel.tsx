@@ -1,7 +1,7 @@
 import React from "react";
 
 interface LoadingWheelProps {
-  waitMessage: string
+  waitMessage: string | null
 }
 
 export default function LoadingWheel( {waitMessage}: LoadingWheelProps ) {
