@@ -1,36 +1,40 @@
 // Las funciones por medio de las cuales se puede hacer el pedido a las APIS
 
 import { Table } from "@/types/types"
+import JSONBig from 'json-bigint';
 
 // Esta función hace la búsqueda asincrónica a la base de datos:
 export async function getTable(table: string): Promise<Table> {
 
-  try {
-    const response = await fetch(`/api/${table}`);
-    
-    if (response.ok) {
-      const data = await response.json(); // Esto convierte la respuesta a un objeto JavaScript
-      return {
-        headers: data.headers,
-        data: data.data,
-        erasable: data.erasable,
-      };
-    } else {
-      console.error('Error al obtener los datos:', response.statusText);
-      return {
-        headers: [],
-        data: [],
-        erasable: true,
-      };
-    }
-  } catch (error) {
-    console.error('Problema en la solicitud:', error);
-    return {
-      headers: [],
-      data: [],
-      erasable: true,
-    };
+  const r = {
+    headers: {},
+    data: [],
+    erasable: true,
   }
+  
+  try {
+    const response = await fetch(`/api/crud?table=${table}`);
+    
+    if (response.ok) {      
+      
+      const text = await response.text(); 
+      const res = JSONBig.parse(text);
+      
+      const data = res;
+      if (res.hasBigInt) data.data = JSONBig.parse(res.data);      
+      
+      r.headers = data.headers; 
+      r.data = data.data;
+      r.erasable = data.erasable;
+
+    } else {
+      const error = await response.json();
+      console.error(`Error al obtener los datos: ${error.error}, ${response.status}`);
+
+    }
+  } catch (error) {console.error('Problema en la solicitud:', error)};
+
+  return r;
 
 };
 

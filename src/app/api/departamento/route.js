@@ -2,88 +2,9 @@ import { NextResponse } from "next/server"
 import { prisma } from '@/libs/prisma'
 import { Prisma } from '@prisma/client'
 
-import { getColumnsInfo, defaultConstraints, validateAllRegisters } from "@/utils/apiUtils";
+import { validateAllRegisters } from "@/utils/apiUtils";
 
-const columnasModificables = ['poblacion','gobernador'];
-const ids = ['nombre'];
 const notChoosableInCreate = []
-
-export async function GET(request) {
-    try {
-
-        const {searchParams} = new URL(request.url);
-        const nombre = searchParams.get('nombre')
-        const area = searchParams.get('area')
-        const poblacion = searchParams.get('poblacion')
-        const gobernador = searchParams.get('gobernador')        
-
-        const filters = {};
-        if (nombre) filters.nombre = { contains: nombre, mode: 'insensitive' }; // Búsqueda parcial
-        if (area) filters.area = {lte : parseInt(area)}; // Menor o igual al área
-        if (poblacion) filters.poblacion = { lte: parseInt(poblacion) }; // Menor o igual a población
-        if (gobernador) filters.gobernador = { contains: gobernador, mode: 'insensitive' }; // Búsqueda parcial
-        //console.log(filters)
-        const data = await prisma.departamento.findMany({
-            where: filters,
-            orderBy: {
-                nombre: 'asc',  
-            },
-        });
-
-        const columnasInfo = await getColumnsInfo('Departamento');
-        
-        // Determinar cuáles columnas son modificables
-
-
-        function defPossibleValues(column_name, colsInfo) {
-            let constraints = Object.assign({}, defaultConstraints);
-        
-            // Obtener información de la columna correspondiente
-            const columnInfo = colsInfo.find(col => col.column_name === column_name);
-            
-            if (columnInfo.data_type === "character varying") {
-                constraints.maxLength = columnInfo.character_maximum_length;
-            }
-
-            // Dependiendo del tipo de dato y la columna, establecer las restricciones
-            switch (column_name) {
-                case 'gobernador':
-                    constraints.minLength = 4;
-                    break;
-                case 'nombre':            
-                    constraints.minLength = 2;
-                    break;
-                case 'area':
-                    constraints.min = 1;
-                    break;
-            }
-        
-            return constraints;
-        }
-        
-        // Formatear la información de las columnas
-        const headers = columnasInfo.reduce((acc, col) => {
-            
-            const constraints = defPossibleValues(col.column_name, columnasInfo);
-            
-            acc[col.column_name] = {
-                type: col.data_type,
-                modifiable: columnasModificables.includes(col.column_name),
-                constraints: constraints,
-                possibleValues: null,
-                isPrimaryKey: ids.includes(col.column_name),
-                choosableInCreate: !notChoosableInCreate.includes(col.column_name),
-            };
-            return acc;
-        }, {});
-
-        return NextResponse.json({headers,data, erasable: true})       
-
-    } catch (error) {
-    console.error('Error en el endpoint:', error);
-    res.status(500).json({ error: 'Ocurrió un error al procesar la solicitud' });
-    }    
-}
 
 export async function PUT (request){
        
