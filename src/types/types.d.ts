@@ -31,3 +31,24 @@ export interface Table {
   data: DataEntry[];
   erasable: boolean;
 }
+
+export type PrismaModelName = "departamento" | "municipio" | "vivienda" | "persona";
+
+// El formato de las tablas, para la api
+export interface Tables {
+    [key: string] : {
+        name: string,
+        prismaName: PrismaModelName, 
+        constraints: {
+            [key: string]: Partial<{
+              [key in keyof AttributeConstraints]?: AttributeConstraints[key]
+            }>
+        },
+        modifiableColumns: string[],
+        ids: string[],
+        notChoosableInCreate: string[],   
+        defRange?: (columnName: string) => Promise<string[] | number[] | null>,
+        hasBigInt: boolean,     
+    }
+};
+
